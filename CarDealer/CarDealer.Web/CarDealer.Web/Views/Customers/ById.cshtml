@@ -1,0 +1,40 @@
+﻿@model IEnumerable<CustomersWithSalesModel>
+
+@{
+    ViewData["Title"] = "ById";
+}
+
+<div class="well">
+    <h2 class="text-left text-primary">Customer With Sales</h2>
+</div>
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+        <tr>
+            <th class="text-center">
+                Name
+            </th>
+            <th class="text-center">
+                Bought cars (count)
+            </th>
+            <th class="text-center">
+                Total spent money
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model)
+        {
+            <tr>
+                <td class="text-center">
+                    @customer.Name
+                </td>
+                <td class="text-center">
+                    @customer.BoughtCars
+                </td>
+                <td class="text-center">
+                    @customer.TotalSpentMoney.ToString("C2", CultureInfo.CreateSpecificCulture("en-US"))
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

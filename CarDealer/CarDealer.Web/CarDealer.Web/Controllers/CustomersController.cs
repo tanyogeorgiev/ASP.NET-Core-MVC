@@ -30,5 +30,8 @@
             });
         }
 
+        [Route("customers/{id}")]
+        public IActionResult ById(int Id) =>
+            View(this.customers.CustomersWithSales(Id));
     }
 }
