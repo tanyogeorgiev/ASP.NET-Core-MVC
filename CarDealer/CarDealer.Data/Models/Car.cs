@@ -18,7 +18,7 @@
         [Range(0,long.MaxValue)]
         public long TravelledDistance { get; set; }
 
-        public List<Sale> Sales { get; set; } = new List<Models.Sale>();
+        public List<Sale> Sales { get; set; } = new List<Sale>();
 
         public List<PartCar> Parts { get; set; } = new List<PartCar>();
     }

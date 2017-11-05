@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
-namespace CarDealer.Web.Models.ManageViewModels
+namespace CarDealer.Web.Models.ManageModels
 {
-    public class ExternalLoginsViewModel
+    public class ExternalLoginsModel
     {
         public IList<UserLoginInfo> CurrentLogins { get; set; }
 

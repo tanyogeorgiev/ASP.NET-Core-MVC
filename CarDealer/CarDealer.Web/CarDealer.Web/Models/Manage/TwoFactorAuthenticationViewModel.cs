@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CarDealer.Web.Models.ManageViewModels
+namespace CarDealer.Web.Models.ManageModels
 {
-    public class TwoFactorAuthenticationViewModel
+    public class TwoFactorAuthenticationModel
     {
         public bool HasAuthenticator { get; set; }
 
