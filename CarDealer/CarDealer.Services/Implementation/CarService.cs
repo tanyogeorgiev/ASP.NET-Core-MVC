@@ -2,8 +2,9 @@
 namespace CarDealer.Services.Implementation
 
 {
+    using CarDealer.Services.Models;
     using Data;
-    using Services.Models;
+    using Services.Models.Cars;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -32,5 +33,21 @@ namespace CarDealer.Services.Implementation
                 }).ToList();
 
         }
-        }
+
+        public IEnumerable<CarWithPartsModel> WithParts() => this.db
+                .Cars
+                .Select(c => new CarWithPartsModel
+                {
+                    Make = c.Make,
+                    Model = c.Model,
+                    TravelledDistance = c.TravelledDistance,
+                    Parts = c.Parts.Select(p => new PartModel
+                    {
+                        Name = p.Part.Name,
+                        Price = p.Part.Price
+                    })
+                }).ToList();
+
+
     }
+}

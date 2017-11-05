@@ -33,3 +33,8 @@
         display: none;
     }
 }
+
+/* Table vertical align cell */
+.table tbody > tr > td.align-middle {
+    vertical-align: middle !important;
+}

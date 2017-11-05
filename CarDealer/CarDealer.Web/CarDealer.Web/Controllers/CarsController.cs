@@ -29,5 +29,11 @@ namespace CarDealer.Web.Controllers
                 Cars = cars
             });
         }
+
+        [Route("cars/parts")]
+        public IActionResult Parts()
+        {
+            return View(this.cars.WithParts());
+        }
     }
 }
