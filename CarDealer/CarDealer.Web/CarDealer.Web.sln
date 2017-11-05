@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarDealer.Web", "CarDealer.Web\CarDealer.Web.csproj", "{6A98D388-924E-4C65-B4CD-20DDC3E1124F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarDealer.Data", "..\CarDealer.Data\CarDealer.Data.csproj", "{D411C1D9-1947-477E-BEC7-577DC2BA2450}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarDealer.Data", "CarDealer.Data\CarDealer.Data.csproj", "{D411C1D9-1947-477E-BEC7-577DC2BA2450}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarDealer.Services", "..\CarDealer.Services\CarDealer.Services.csproj", "{E06D6736-1D05-4A2E-A922-89ED6C92ADF1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarDealer.Services", "CarDealer.Services\CarDealer.Services.csproj", "{E06D6736-1D05-4A2E-A922-89ED6C92ADF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
