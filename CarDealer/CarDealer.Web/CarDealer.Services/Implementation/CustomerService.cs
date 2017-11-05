@@ -2,6 +2,7 @@
 {
     using Data;
     using Models;
+    using Models.Customers;
     using System.Linq;
     using System.Collections.Generic;
     using System;
@@ -44,5 +45,15 @@
                     IsYoungDriver = c.IsYoungDriver
                 }).ToList();
         }
+
+        public IEnumerable<CustomersWithSalesModel> CustomersWithSales(int Id) => this.db
+            .Customers
+            .Where(c => c.Id == Id)
+            .Select(m => new CustomersWithSalesModel
+            {
+                Name = m.Name,
+                BoughtCars = m.Sales.Count,
+                TotalSpentMoney = m.Sales.Sum(s => s.Car.Parts.Sum(p => p.Part.Price))
+            }).ToList();
     }
 }
