@@ -10,7 +10,7 @@
         [MaxLength(100)]
         public string Name { get; set; }
 
-        public bool IsImorter { get; set; }
+        public bool IsImporter { get; set; }
 
         public List<Part> Parts { get; set; }
 

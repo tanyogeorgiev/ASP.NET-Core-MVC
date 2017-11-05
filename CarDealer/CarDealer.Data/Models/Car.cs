@@ -12,7 +12,7 @@
         public string Make { get; set; }
 
         [Required]
-        [MaxLength(30)]
+        [MaxLength(100)]
         public string Model { get; set; }
 
         [Range(0,long.MaxValue)]
