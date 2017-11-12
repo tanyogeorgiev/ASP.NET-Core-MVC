@@ -10,7 +10,7 @@
         
         IEnumerable<CustomerModel> OrderedCustomers (OrderBy order);
 
-        IEnumerable<CustomersWithSalesModel> CustomersWithSales(int Id);
+        CustomersWithSalesModel CustomersWithSales(int Id);
 
     }
 }

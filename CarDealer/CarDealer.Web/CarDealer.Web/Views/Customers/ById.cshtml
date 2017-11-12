@@ -1,9 +1,12 @@
-﻿@model IEnumerable<CustomersWithSalesModel>
+﻿@model CustomersWithSalesModel
 
 @{
     ViewData["Title"] = "ById";
 }
 
+@{ 
+    var countCars = Model.BoughtCars.Count();
+}
 <div class="well">
     <h2 class="text-left text-primary">Customer With Sales</h2>
 </div>
@@ -14,7 +17,7 @@
                 Name
             </th>
             <th class="text-center">
-                Bought cars (count)
+                Bought @(countCars > 1? "cars" : "car")
             </th>
             <th class="text-center">
                 Total spent money
@@ -22,19 +25,17 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var customer in Model)
-        {
             <tr>
                 <td class="text-center">
-                    @customer.Name
+                    @Model.Name
                 </td>
                 <td class="text-center">
-                    @customer.BoughtCars
+                    @Model.BoughtCars.Count()
                 </td>
                 <td class="text-center">
-                    @customer.TotalSpentMoney.ToString("C2", CultureInfo.CreateSpecificCulture("en-US"))
+                    @Model.TotalSpentMoney.ToString("C2", CultureInfo.CreateSpecificCulture("en-US"))
                 </td>
             </tr>
-        }
+        
     </tbody>
 </table>

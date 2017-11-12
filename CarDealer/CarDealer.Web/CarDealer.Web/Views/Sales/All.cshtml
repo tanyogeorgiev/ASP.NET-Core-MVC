@@ -1,0 +1,46 @@
+﻿@model IEnumerable<SaleListModel>
+@{
+    ViewData["Title"] = "All Sales";
+}
+
+<h2> @ViewData["Title"]</h2>
+
+
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+        <tr>
+            <th class="text-center">
+                Customer
+            </th>
+            <th class="text-center">
+                Price
+            </th>.
+            <th class="text-center">
+                Discount
+            </th>
+            <th class="text-center">
+                Discounted Price
+            </th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model)
+        {
+            <tr>
+                <td class="text-center">
+                    @customer.CustomerName
+                </td>
+                <td class="text-center">
+                    @customer.Price.ToString("C2", CultureInfo.CreateSpecificCulture("en-US"))
+                </td>
+                <td class="text-center">
+                  @(customer.Discount + (customer.IsYoungDriver? 0.05 : 0 ) * 100) %
+                </td>
+                <td class="text-center">
+                    @customer.DiscountedPrice.ToString("C2", CultureInfo.CreateSpecificCulture("en-US"))
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

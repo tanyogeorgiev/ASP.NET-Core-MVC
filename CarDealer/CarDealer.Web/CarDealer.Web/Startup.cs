@@ -10,8 +10,7 @@ namespace CarDealer.Web
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Services;
-    using Services.Implementation;
+    using Infrastructures.Extensions;
 
 
 
@@ -33,9 +32,8 @@ namespace CarDealer.Web
                 .AddEntityFrameworkStores<CarDealerDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddTransient<ICustomerService, CustomerService>();
-            services.AddTransient<ICarService, CarService>();
-            services.AddTransient<ISupplierService, SupplierService>();
+            services.AddDomainServices();
+
 
             services.AddMvc();
         }
