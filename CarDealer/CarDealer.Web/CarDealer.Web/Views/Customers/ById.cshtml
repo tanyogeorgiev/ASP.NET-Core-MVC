@@ -33,7 +33,7 @@
                     @Model.BoughtCars.Count()
                 </td>
                 <td class="text-center">
-                    @Model.TotalSpentMoney.ToString("C2", CultureInfo.CreateSpecificCulture("en-US"))
+                    @Model.TotalSpentMoney.ToPrice()
                 </td>
             </tr>
         

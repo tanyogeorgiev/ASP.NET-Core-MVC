@@ -4,7 +4,9 @@ namespace CarDealer.Web.Controllers
 {
     using Services;
     using Microsoft.AspNetCore.Mvc;
+    using Infrastructures.Extensions;
 
+    [Route("sales")]
     public class SalesController : Controller
     {
         private readonly ISaleService sales;
@@ -14,7 +16,11 @@ namespace CarDealer.Web.Controllers
             this.sales = sales;
         }
 
-        [Route("sales")]
+        [Route("")]
         public IActionResult All() => View(sales.All());
+
+        [Route("{id}")]
+        public IActionResult Details(int id)
+            => this.ViewOrNotFound(this.sales.Details(id));
     }
 }

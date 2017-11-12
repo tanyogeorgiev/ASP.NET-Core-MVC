@@ -41,7 +41,7 @@
                     <ul>
                     @foreach (var part in car.Parts)
                     {
-                        <li class="table-striped">@part.Name - $@part.Price</li>
+                        <li class="table-striped">@part.Name - @part.Price.ToPrice()</li>
                     }
                     </ul>
                 </td>

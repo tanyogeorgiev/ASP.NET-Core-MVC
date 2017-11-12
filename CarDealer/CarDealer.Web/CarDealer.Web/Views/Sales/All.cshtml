@@ -25,20 +25,23 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var customer in Model)
+        @foreach (var sale in Model)
         {
             <tr>
                 <td class="text-center">
-                    @customer.CustomerName
+                    @sale.CustomerName
                 </td>
                 <td class="text-center">
-                    @customer.Price.ToString("C2", CultureInfo.CreateSpecificCulture("en-US"))
+                    @sale.Price.ToPrice()
                 </td>
                 <td class="text-center">
-                  @(customer.Discount + (customer.IsYoungDriver? 0.05 : 0 ) * 100) %
+                  @(sale.Discount + (sale.IsYoungDriver? 0.05 : 0 ) * 100) %
                 </td>
                 <td class="text-center">
-                    @customer.DiscountedPrice.ToString("C2", CultureInfo.CreateSpecificCulture("en-US"))
+                    @sale.DiscountedPrice.ToPrice()
+                </td>
+                <td>
+                    <a class=""btn btn-sm btn-default" href="/sales/@sale.Id">Details</a>
                 </td>
             </tr>
         }
