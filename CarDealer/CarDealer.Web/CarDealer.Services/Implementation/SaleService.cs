@@ -44,5 +44,23 @@ namespace CarDealer.Services.Implementation
                 }
 
             }).FirstOrDefault();
+
+        public IEnumerable<SaleListModel> Discounted()
+        => this.db
+            .Sales
+            .Where(a => a.Discount > 0)
+            .Select(lm => new SaleListModel
+            {
+                Id = lm.Id,
+                CustomerName = lm.Customer.Name,
+                Discount = lm.Discount,
+                IsYoungDriver = lm.Customer.IsYoungDriver,
+                Price = lm.Car.Parts.Sum(p => p.Part.Price)
+            })
+            .ToList();
+
+
+
     }
+
 }

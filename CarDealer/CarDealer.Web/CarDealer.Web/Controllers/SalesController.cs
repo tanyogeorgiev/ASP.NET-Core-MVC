@@ -22,5 +22,8 @@ namespace CarDealer.Web.Controllers
         [Route("{id}")]
         public IActionResult Details(int id)
             => this.ViewOrNotFound(this.sales.Details(id));
+
+        [Route("discounted")]
+        public IActionResult Discounted() => this.View("All",sales.Discounted());
     }
 }
