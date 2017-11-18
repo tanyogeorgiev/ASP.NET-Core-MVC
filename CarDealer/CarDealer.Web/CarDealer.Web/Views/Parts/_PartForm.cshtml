@@ -34,15 +34,13 @@
         if (pageName.ToString() != "delete")
         {
             <div>
-                @{if (pageName.ToString() == "edit")
-                {
-                    <a href="/parts/all" class=" btn btn-default">Back</a>
+                @{if (pageName.ToString().ToLower() == "edit")
+                    {
+                        <a href="/parts/all" class=" btn btn-default">Back</a>
+                    }
                 }
-            }
                 <input class="btn btn-success" type="submit" value="Save Part" />
-               
             </div>
         }
-
     }
 </form>
