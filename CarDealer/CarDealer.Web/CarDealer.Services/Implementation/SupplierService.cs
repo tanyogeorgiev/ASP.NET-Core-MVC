@@ -6,7 +6,7 @@ namespace CarDealer.Services.Implementation
 {
     using Data;
     using Services;
-    using Services.Models;
+    using Services.Models.Suppliers;
     using System.Linq;
 
     public class SupplierService : ISupplierService
@@ -18,10 +18,23 @@ namespace CarDealer.Services.Implementation
             this.db = db;
         }
 
-        public IEnumerable<SupplierModel> All(bool isImporter) => this.db
+        public IEnumerable<SupplierModel> All()
+         => this.db
+                .Suppliers
+                .OrderBy(s => s.Name)
+                .Select(s => new SupplierModel
+                {
+                    Id = s.Id,
+                    Name = s.Name
+
+                }).ToList();
+
+
+
+        public IEnumerable<SupplierListingModel> AllListings(bool isImporter) => this.db
                  .Suppliers
                  .Where(s => s.IsImporter == isImporter)
-                 .Select(sm => new SupplierModel
+                 .Select(sm => new SupplierListingModel
                  {
                      Id = sm.Id,
                      Name = sm.Name,

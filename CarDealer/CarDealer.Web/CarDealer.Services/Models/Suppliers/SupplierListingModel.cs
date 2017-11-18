@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CarDealer.Services.Models
+namespace CarDealer.Services.Models.Suppliers
 {
-    public class SupplierModel
+    public class SupplierListingModel : SupplierModel
     {
-        public int Id { get; set; }
-
-        public string Name { get; set; }
-
+       
         public int TotalParts { get; set; }
 
     }

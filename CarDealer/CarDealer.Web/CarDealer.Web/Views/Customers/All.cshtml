@@ -7,7 +7,7 @@
 
 <div class="well">
     <h2 class="text-left text-primary">All Customers</h2>
-    <h5 class=" text-info text-success"   >@Model.OrderBy.ToString() order</h5>
+    <h5 class=" text-info text-success" @Model.OrderBy.ToString() order</h5>
 </div>
 <table class="table table-bordered table-hover table-striped">
     <thead>
@@ -36,9 +36,11 @@
                 <td class="text-center">
                     @(customer.IsYoungDriver? "Yes" : "No")
                 </td>
+
+                <td>
+                    <a class="btn btn-sm btn-warning" href="/customers/edit/@customer.Id"> Edit</a>
+                </td>
             </tr>
         }
     </tbody>
 </table>
-
-

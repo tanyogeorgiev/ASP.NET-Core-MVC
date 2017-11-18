@@ -2,11 +2,12 @@
 namespace CarDealer.Services
 { 
     using System.Collections.Generic;
-    using Services.Models;
+    using Services.Models.Suppliers;
 
     public interface ISupplierService
     {
-        IEnumerable<SupplierModel> All(bool isImporter);
+        IEnumerable<SupplierListingModel> AllListings(bool isImporter);
 
+        IEnumerable<SupplierModel> All();
     }
 }

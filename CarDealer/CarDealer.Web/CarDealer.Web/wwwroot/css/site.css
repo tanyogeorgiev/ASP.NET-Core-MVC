@@ -38,3 +38,7 @@
 .table tbody > tr > td.align-middle {
     vertical-align: middle !important;
 }
+
+a.disabled {
+    pointer-events : none
+}

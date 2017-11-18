@@ -1,0 +1,11 @@
+﻿@model CustomerFormModel
+@{
+    ViewData["Title"] = "Create customer";
+}
+
+    @ViewData["name"]
+
+<h2>@ViewData["Title"]</h2>
+
+
+@Html.Partial("_CustomerForm", Model)
