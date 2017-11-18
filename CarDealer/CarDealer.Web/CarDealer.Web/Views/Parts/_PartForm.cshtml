@@ -6,11 +6,24 @@
 <form method="post">
     <div class="row">
         <div class="col-md-3">
-            <div class="form-group">
-                <label asp-for="Name"> Name</label>
-                <input placeholder="Part name" asp-for="Name" type="text" class="form-control" readonly="@(pageName.ToString() == "edit" ? "readonly" : "")" />
-                <span asp-validation-for="Name" class="form-text text-danger"></span>
-            </div>
+           
+                   <div class="form-group">
+                    <label asp-for="Name"> Name</label>
+                       @{
+                           if (pageName.ToString().ToLower() == "edit")
+                           {
+                            <input placeholder="Part name" asp-for="Name" type="text" class="form-control" readonly />
+                           }
+                           else
+                           {
+                            <input placeholder="Part name" asp-for="Name" type="text" class="form-control" />
+
+                           }
+                    }
+                    <span asp-validation-for="Name" class="form-text text-danger"></span>
+                </div>
+           
+
             <div class="form-group">
                 <label asp-for="Price"></label>
                 <input asp-for="Price" min="0" class="form-control" />
@@ -21,14 +34,14 @@
                 <input asp-for="Quantity" min="1" type="number" class="form-control" />
                 <span asp-validation-for="Quantity" class="form-text text-danger"></span>
             </div>
-
-            <div class="form-group">
-                <label asp-for="SupplierId"></label>
-                <select class="form-control" asp-for="SupplierId" asp-items="Model.SuppliersList" readonly="@(pageName.ToString() == "edit" ? "readonly" : "")"></select>
-                <span asp-validation-for="SupplierId" class="form-text text-danger"></span>
-            </div>
-
-        </div>
+            <fieldset @(pageName.ToString().ToLower() == "edit" ? "disabled" : "") )>
+                <div class="form-group">
+                    <label asp-for="SupplierId"></label>
+                    <select class="form-control" asp-for="SupplierId" asp-items="Model.SuppliersList"></select>
+                    <span asp-validation-for="SupplierId" class="form-text text-danger"></span>
+                </div>
+            </fieldset>
+</div>
     </div>
     @{
         if (pageName.ToString() != "delete")
@@ -41,6 +54,6 @@
                 }
                 <input class="btn btn-success" type="submit" value="Save Part" />
             </div>
-        }
+                    }
     }
 </form>

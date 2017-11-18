@@ -33,7 +33,7 @@ namespace CarDealer.Web.Controllers
         [HttpPost]
         public IActionResult Create(PartFormModel modelPart)
         {
-            ModelState.AddModelError(nameof(PartFormModel.SupplierId), "Invalid supplier.");
+            //ModelState.AddModelError(nameof(PartFormModel.SupplierId), "Invalid supplier.");
 
 
             if (!ModelState.IsValid)
