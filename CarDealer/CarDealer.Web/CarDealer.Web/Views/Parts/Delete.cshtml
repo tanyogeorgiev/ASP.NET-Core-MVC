@@ -1,0 +1,14 @@
+﻿@model DeleteFormModel
+@{
+    ViewData["Title"] = "Are you sure to delete part:";
+  
+}
+
+<h2>@ViewData["Title"]</h2>
+   
+<fieldset disabled>
+    @Html.Partial("_PartForm", Model)
+</fieldset>
+
+<a href="/parts/all" class=" btn btn-default">Back</a>
+<a href="/parts/destroy/@Model.Id"  class=" btn btn-danger">Confirm delete!</a>

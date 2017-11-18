@@ -2,7 +2,6 @@
 namespace CarDealer.Web.Models.Parts
 {
     using System.ComponentModel.DataAnnotations;
-    using Services.Models.Suppliers;
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -12,8 +11,7 @@ namespace CarDealer.Web.Models.Parts
         [MaxLength(100)]
         public string Name { get; set; }
 
-        [Range(0.0, double.MaxValue)]
-        
+        [Range(0.0, double.MaxValue, ErrorMessage ="Price must be positive number!")]
         public decimal Price { get; set; }
 
         [Range(0, int.MaxValue)]

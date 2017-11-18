@@ -1,16 +1,19 @@
 ﻿@model PartFormModel
+@{
+    var pageName = ViewContext.RouteData.Values["action"];
+}
 
 <form method="post">
     <div class="row">
         <div class="col-md-3">
             <div class="form-group">
                 <label asp-for="Name"> Name</label>
-                <input asp-for="Name" type="text" class="form-control" />
+                <input placeholder="Part name" asp-for="Name" type="text" class="form-control" readonly="@(pageName.ToString() == "edit" ? "readonly" : "")" />
                 <span asp-validation-for="Name" class="form-text text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Price"></label>
-                <input asp-for="Price" type="number" step="0.01" class="form-control" />
+                <input asp-for="Price" min="0" class="form-control" />
                 <span asp-validation-for="Price" class="form-text text-danger"></span>
             </div>
             <div class="form-group">
@@ -21,15 +24,25 @@
 
             <div class="form-group">
                 <label asp-for="SupplierId"></label>
-               
-                <select class="form-control"  asp-for="SupplierId" asp-items="Model.SuppliersList"></select>
+                <select class="form-control" asp-for="SupplierId" asp-items="Model.SuppliersList" readonly="@(pageName.ToString() == "edit" ? "readonly" : "")"></select>
                 <span asp-validation-for="SupplierId" class="form-text text-danger"></span>
             </div>
 
-           </div>
+        </div>
     </div>
-    <div>
-        <input class="btn btn-success" type="submit" value="Save Part" />
-    </div>
+    @{
+        if (pageName.ToString() != "delete")
+        {
+            <div>
+                @{if (pageName.ToString() == "edit")
+                {
+                    <a href="/parts/all" class=" btn btn-default">Back</a>
+                }
+            }
+                <input class="btn btn-success" type="submit" value="Save Part" />
+               
+            </div>
+        }
 
+    }
 </form>

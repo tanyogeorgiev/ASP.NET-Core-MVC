@@ -16,6 +16,7 @@ namespace CarDealer.Services
         PartListingModel ById(int Id);
 
         bool Exists(int id);
-        void Edit(int id, string name, decimal price, int quantity, int supplierId);
+        void Edit(int id, decimal price, int quantity);
+        void Delete(int id);
     }
 }

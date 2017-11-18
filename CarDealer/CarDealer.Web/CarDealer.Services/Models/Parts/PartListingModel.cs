@@ -8,6 +8,8 @@ namespace CarDealer.Services.Models.Parts
     {
         public int Quantity { get; set; }
 
+        public int SupplierId { get; set; }
+
         public string SupplierName { get; set; }
     }
 }

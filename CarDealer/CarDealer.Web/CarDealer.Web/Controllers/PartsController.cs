@@ -6,6 +6,7 @@ namespace CarDealer.Web.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     public class PartsController : Controller
@@ -25,19 +26,19 @@ namespace CarDealer.Web.Controllers
         public IActionResult Create()
             => View(new PartFormModel
             {
-                SuppliersList = this.suppliers.All().Select(s => new SelectListItem
-                {
-                    Text = s.Name,
-                    Value = s.Id.ToString()
-                })
+                SuppliersList = GetSupplierListItems()
 
             });
 
         [HttpPost]
         public IActionResult Create(PartFormModel modelPart)
         {
+            ModelState.AddModelError(nameof(PartFormModel.SupplierId), "Invalid supplier.");
+
+
             if (!ModelState.IsValid)
             {
+                modelPart.SuppliersList = GetSupplierListItems();
                 return View(modelPart);
             }
 
@@ -64,15 +65,11 @@ namespace CarDealer.Web.Controllers
         public IActionResult Edit(int Id)
         {
             var part = this.parts.ById(Id);
-            var suppliersList = this.suppliers.All().Select(s => new SelectListItem
-            {
-                Text = s.Name,
-                Value = s.Id.ToString()
-            });
-            int supplierId = int.Parse(suppliersList
-                .Where(s => s.Text == part.SupplierName)
-                .Select(s => s.Value)
-                .First());
+            var supplierId = part.SupplierId;
+
+            var suppliersList = GetSupplierListItems(supplierId);
+              
+
 
             if (part == null)
             {
@@ -84,7 +81,7 @@ namespace CarDealer.Web.Controllers
                 Name = part.Name,
                 Price = part.Price,
                 Quantity = part.Quantity,
-                SupplierId = supplierId,
+                SupplierId = part.SupplierId,
                 SuppliersList = suppliersList
             });
 
@@ -95,6 +92,8 @@ namespace CarDealer.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
+              
+                modelPart.SuppliersList = GetSupplierListItems(modelPart.SupplierId);
                 return View(modelPart);
             }
 
@@ -106,15 +105,76 @@ namespace CarDealer.Web.Controllers
             }
 
             this.parts.Edit(
-                Id,
-                modelPart.Name,
+                Id,               
                 modelPart.Price,
-                modelPart.Quantity,
-                modelPart.SupplierId
+                modelPart.Quantity               
                 );
 
             return RedirectToAction(nameof(All));
         }
+
+
+        public IActionResult Delete(int Id)
+        {
+            var part = this.parts.ById(Id);
+
+            int supplierId = part.SupplierId;
+
+            var suppliersList = GetSupplierListItems(supplierId);
+
+
+            if (part == null)
+            {
+                return NotFound();
+            }
+
+            return View(new DeleteFormModel
+            {
+                Id = Id,
+                Name = part.Name,
+                Price = part.Price,
+                Quantity = part.Quantity,
+                SupplierId = part.SupplierId,
+                SuppliersList = suppliersList
+            });
+        }
+
+        
+        public IActionResult Destroy(int id)
+        {
+            bool partExist = this.parts.Exists(id);
+
+            if (!partExist)
+            {
+                return NotFound();
+            }
+
+            this.parts.Delete(id);
+
+            return RedirectToAction(nameof(All));
+        }
+
+
+        private IEnumerable<SelectListItem> GetSupplierListItems(int id = 0)
+
+        {
+          var supplierList =  this.suppliers.All().Select(s => new SelectListItem
+            {
+                Text = s.Name,
+                Value = s.Id.ToString()
+            });
+
+            if (id != 0)
+            {
+                supplierList = supplierList.Where(s => s.Value == id.ToString());
+            }
+
+
+            return supplierList;
+        }
+
+
+
     }
 }
 

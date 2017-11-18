@@ -59,6 +59,7 @@ namespace CarDealer.Services.Implementation
                 Name = p.Name,
                 Quantity = p.Quantity,
                 Price = p.Price,
+                SupplierId = p.SupplierId,
                 SupplierName = p.Supplier.Name
                
                 
@@ -66,17 +67,27 @@ namespace CarDealer.Services.Implementation
 
         public bool Exists(int id) => this.db.Parts.Any(p => p.Id == id);
 
-        public void Edit(int id, string name, decimal price, int quantity, int supplierId)
+        public void Edit(int id, decimal price, int quantity)
         {
             var partToEdit = this.db.Parts.Find(id);
 
-            partToEdit.Name = name;
+           
             partToEdit.Price = price;
             partToEdit.Quantity = quantity;
-            partToEdit.SupplierId = supplierId;
+          
 
             this.db.SaveChanges();
           
+        }
+
+
+        public void Delete(int id)
+        {
+            var part = this.db.Parts.Find(id);
+
+            this.db.Remove(part);
+            this.db.SaveChanges();
+
         }
     }
 }

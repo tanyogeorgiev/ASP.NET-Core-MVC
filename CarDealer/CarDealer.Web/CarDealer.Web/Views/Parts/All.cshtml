@@ -54,6 +54,9 @@
             <th class="text-center">
                 Supplier
             </th>
+            <th class="text-center">
+                Actions
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -72,8 +75,9 @@
                 <td class="text-center">
                     @part.SupplierName
                 </td>
-                <td>
+                <td class="text-center">
                     <a class="btn btn-sm btn-warning" href="/parts/edit/@part.Id"> Edit</a>
+                    <a class="btn btn-sm btn-danger" href="/parts/delete/@part.Id"> Delete</a>
                 </td>
             </tr>
         }
