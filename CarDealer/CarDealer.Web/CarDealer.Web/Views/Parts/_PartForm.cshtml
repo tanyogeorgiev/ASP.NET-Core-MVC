@@ -34,10 +34,10 @@
                 <input asp-for="Quantity" min="1" type="number" class="form-control" />
                 <span asp-validation-for="Quantity" class="form-text text-danger"></span>
             </div>
-            <fieldset @(pageName.ToString().ToLower() == "edit" ? "disabled" : "") )>
+            <fieldset @(pageName.ToString().ToLower() == "edit" ? "disabled" : "")>
                 <div class="form-group">
                     <label asp-for="SupplierId"></label>
-                    <select class="form-control" asp-for="SupplierId" asp-items="Model.SuppliersList"></select>
+                    <select multiple class="form-control" asp-for="SupplierId" asp-items="Model.SuppliersList"></select>
                     <span asp-validation-for="SupplierId" class="form-text text-danger"></span>
                 </div>
             </fieldset>
@@ -47,11 +47,10 @@
         if (pageName.ToString() != "delete")
         {
             <div>
-                @{if (pageName.ToString().ToLower() == "edit")
-                    {
+               
                         <a href="/parts/all" class=" btn btn-default">Back</a>
-                    }
-                }
+                 
+                
                 <input class="btn btn-success" type="submit" value="Save Part" />
             </div>
                     }

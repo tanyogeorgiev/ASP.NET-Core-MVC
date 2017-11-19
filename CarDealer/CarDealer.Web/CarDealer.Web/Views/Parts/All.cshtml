@@ -10,14 +10,15 @@
 <hr>
 <a class="btn btn-primary" href="/parts/create"> Add Part</a>
 <hr>
-<ul class="pagination pagination-lg justify-content-center">
+<div class="text-center">
+<ul class="pagination pagination-lg">
     <li class="page-item @(Model.CurrentPage == 1 ? "hidden" : "")">
         <a class="page-link  @(Model.CurrentPage == 1 ? "disabled" : "") " href="/parts/all?page=@(Model.PreviousPage)">Previous</a>
-</li>
+    </li>
 
     @{
         for (int i = 1; i <= Model.TotalPages; i++)
-        {
+        {     
             if (i == Model.CurrentPage)
             {
 
@@ -39,6 +40,7 @@
         <a class="page-link  @(Model.CurrentPage == Model.TotalPages   ? "hidden" : "")" href="/parts/all?page=@(Model.NextPage)">Next</a>
     </li>
 </ul>
+    </div>
 <table class="table table-bordered table-hover table-striped">
     <thead>
         <tr>

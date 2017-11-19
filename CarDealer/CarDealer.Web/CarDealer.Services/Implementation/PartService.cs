@@ -16,6 +16,20 @@ namespace CarDealer.Services.Implementation
             this.db = db;
         }
 
+        public IEnumerable<PartListingModel> AllList()
+            => this.db
+            .Parts
+            .OrderByDescending(p => p.Id)
+            .Select(p => new PartListingModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Quantity = p.Quantity,
+                Price = p.Price,
+                SupplierName = p.Supplier.Name
+            }).ToList();
+        
+
         public IEnumerable<PartListingModel> All(int page, int pageSize = 10)
             => this.db
             .Parts
@@ -89,5 +103,6 @@ namespace CarDealer.Services.Implementation
             this.db.SaveChanges();
 
         }
+
     }
 }

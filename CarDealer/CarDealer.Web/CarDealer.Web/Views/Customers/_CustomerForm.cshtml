@@ -30,11 +30,10 @@
         if (pageName.ToString() != "delete")
         {
             <div>
-                @{if (pageName.ToString().ToLower() == "edit")
-                    {
+               
                         <a href="/customers/all/ascending" class=" btn btn-default">Back</a>
-                    }
-                }
+                    
+                
                 <input class="btn btn-success" type="submit" value="Save Customer" />
             </div>
         }

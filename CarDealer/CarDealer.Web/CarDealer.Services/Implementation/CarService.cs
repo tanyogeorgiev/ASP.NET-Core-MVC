@@ -2,9 +2,10 @@
 namespace CarDealer.Services.Implementation
 
 {
-    using CarDealer.Services.Models;
+    using Data.Models;
+    using Models;
     using Data;
-    using Services.Models.Cars;
+    using Models.Cars;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -15,6 +16,29 @@ namespace CarDealer.Services.Implementation
         public CarService(CarDealerDbContext db)
         {
             this.db = db;
+        }
+
+        public void Create(string make, string model, long travelledDistance, int[] partsList)
+        {
+            var existingPartIds = this.db.Parts.Where(p => partsList.Contains(p.Id)).Select(p => p.Id).ToList();
+            var newCar = new Car
+            {
+                Make = make,
+                Model = model,
+                TravelledDistance = travelledDistance,
+            };
+            this.db.Cars.Add(newCar);
+
+            newCar.Parts.AddRange(existingPartIds.Select(partId => new PartCar
+            {
+             PartId = partId
+
+            }));
+
+
+
+         
+            this.db.SaveChanges();
         }
 
         public IEnumerable<CarModel> ByMake(string make)
@@ -34,8 +58,11 @@ namespace CarDealer.Services.Implementation
 
         }
 
+
+
         public IEnumerable<CarWithPartsModel> WithParts() => this.db
                 .Cars
+                .OrderByDescending(c => c.Id)
                 .Select(c => new CarWithPartsModel
                 {
                     Make = c.Make,

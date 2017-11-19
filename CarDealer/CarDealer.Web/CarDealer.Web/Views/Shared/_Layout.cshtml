@@ -45,9 +45,20 @@
                             <li><a href="/sales/discounted">Discounted sales</a></li>
                         </ul>
                     </li>
-
-                    <li><a href="/cars/parts">Cars</a></li>
-                    <li><a href="/parts/all">Parts</a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Cars <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/cars/parts">All cars & parts</a></li>
+                            <li><a href="/cars/create">Create car</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Parts <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/parts/all">All parts</a></li>
+                            <li><a href="/parts/create">Create part</a></li>
+                        </ul>
+                    </li>
                 </ul>
                 
                     @await Html.PartialAsync("_LoginPartial")
