@@ -1,0 +1,28 @@
+﻿@model IEnumerable<CourseListingServiceModel>
+@{
+    ViewData["Title"] = "Active Courses";
+}
+
+<div class="jumbotron ">
+    <h1 class=" text-center">Welcome to out learning system!</h1>
+</div>
+
+<div class="row">
+    @foreach (var course in Model)
+    {
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading text-center">
+                    <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id">@course.Name</a></div>
+                <div class="panel-body text-center">
+                    <img src="http://lorempixel.com/200/200/abstract?a=@Guid.NewGuid()" alt="Alternate Text" />
+                    <hr>
+                <span class="small text-right text-primary">Course duration: @((course.EndDate - course.StartDate).TotalDays) days.</span>
+                <hr>
+                </div>
+               
+            </div>
+        </div>
+
+    }
+</div>

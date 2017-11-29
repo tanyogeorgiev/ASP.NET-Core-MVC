@@ -1,0 +1,49 @@
+﻿@model ArticleListingViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+<ul class="pagination pagination-lg">
+    <li class="page-item @(Model.CurrentPage == 1 ? "hidden" : "")">
+        <a class="page-link  @(Model.CurrentPage == 1 ? "disabled" : "") " href="Articles?page=@(Model.PreviousPage)">Previous</a>
+    </li>
+
+    @{
+        for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            if (i == Model.CurrentPage)
+            {
+
+                <li class="page-item active">
+                    <span class="page-link">
+                        @i<span class="sr-only">(current)</span>
+                    </span>
+                </li>
+            }
+            else
+            {
+                <li class="page-item"><a class="page-link" href="Articles?page=@i">@i</a></li>
+            }
+        }
+    }
+
+
+    <li class="page-item">
+        <a class="page-link  @(Model.CurrentPage == Model.TotalPages   ? "hidden" : "")" href="Articles?page=@(Model.NextPage)">Next</a>
+    </li>
+</ul>
+
+<ul class="list-group">
+    @foreach (var article in Model.Articles)
+    {
+        <li class="list-group-item">
+            <a asp-action="Details" asp-route-title="@article.Title.ToFriendlyUrl()" asp-route-id="@article.Id">
+                <h2> @article.Title</h2>
+            </a>
+            <small> published by @article.Author.Name on @article.PublishDate.ToShortDateString()</small>
+
+        </li>
+    }
+</ul>

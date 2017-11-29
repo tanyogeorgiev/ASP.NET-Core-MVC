@@ -1,0 +1,50 @@
+﻿@model BlogArticleDetailsServiceModel
+@{
+    ViewData["Title"] = "Details Article";
+    var pageName = ViewContext.RouteData.Values["action"];
+
+}
+<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
+<script>tinymce.init({ selector: '#Content' });</script>
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="well">
+    <h2 class="text-left text-primary">@ViewData["Title"]</h2>
+</div>
+
+    <form method="post">
+        <fieldset disabled>
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label asp-for="Title">Title</label>
+                        <input asp-for="Title" type="text" class="form-control" />
+                        <span asp-validation-for="Title" class="form-text text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Content"></label>
+                        <textarea rows="20" asp-for="Content" class="form-control"></textarea>
+                        <span asp-validation-for="Content" class="form-text text-danger"></span>
+                    </div>
+
+                </div>
+            </div>
+        </fieldset>
+@{
+            if (pageName.ToString() != "delete")
+            {
+        <div>
+
+            <a href="/blog/articles" class=" btn btn-default">Back</a>
+
+        </div>
+    }
+}
+
+    </form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -1,0 +1,52 @@
+﻿@model CourseDetailsViewModel
+@{
+    ViewData["Title"] = $"{Model.Course.Name}";
+}
+
+
+
+<div class="panel panel-primary text-center">
+    <div class="panel-heading">Course Details</div>
+    <h2 class="card-title">@ViewData["Title"]</h2>
+    <p class="card-text">Start date: @Model.Course.StartDate.ToShortDateString() / End date:  @Model.Course.EndDate.ToShortDateString()</p>
+
+    <div class="panel-body">
+        <h4>Trainer: @Model.Course.Trainer</h4>
+        @if (User.Identity.IsAuthenticated)
+        {
+            if (Model.Course.StartDate > DateTime.UtcNow)
+            {
+
+                if (Model.UserIsSignedInCourse)
+                {
+
+                    <form asp-action="Signout" asp-route-id="@Model.Course.Id" method="post">
+
+                        <input type="submit" class="btn btn-primary" value="Sign out from course" />
+                    </form>
+
+                }
+                else
+                {
+                    <form asp-action="SignIn" asp-route-id="@Model.Course.Id" method="post">
+                      
+                      <input type="submit" class="btn btn-primary" value="Sign in to course"/>
+                    </form>
+                }
+
+            }
+            else
+            {
+                <div class="text-muted">This course is already started.</div>
+            }
+           
+
+        }
+        else
+        {
+            <div class="text-muted"> To sign in the course, first <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path">log in </a> or <a asp-controller="Account" asp-action="Register" asp-route-returnUrl="@Context.Request.Path"> register</a> :)</div>
+
+        }
+    </div>
+    <div class="panel-footer text-muted">  Students enrolled: @Model.Course.Students</div>
+</div>
