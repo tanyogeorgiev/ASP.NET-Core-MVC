@@ -1,0 +1,58 @@
+﻿@model StudentInCourseViewModel
+
+@{
+    ViewData["Title"] = "Students";
+    var courseIsEnd = Model.Course.EndDate < DateTime.UtcNow;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Grade</th>
+
+            @if (courseIsEnd)
+            {
+                <th>
+                    Change Grade
+                </th>
+            }
+
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var student in Model.Students)
+        {
+            <tr>
+                <td>
+                    @student.Name
+                </td>
+                <td>@student.Email</td>
+
+                <td>@(student.Grade == null ? "No Grade" : student.Grade.ToString())</td>
+
+                @if (courseIsEnd)
+                {
+                    <th>
+                        <form asp-action="GradeStudent" method="post" asp-route-id="@Model.Course.Id">
+                            <input type="hidden" name="studentId" value="@student.Id" />
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <select class="form-control" name="grade" asp-items="@Html.GetEnumSelectList<Grade>()"></select>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="submit" class="btn btn-primary" value="Add Grade" />
+                                </div>
+                            </div>
+                        </form>
+                    </th>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

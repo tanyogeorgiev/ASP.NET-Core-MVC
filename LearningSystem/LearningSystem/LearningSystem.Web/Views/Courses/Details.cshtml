@@ -37,9 +37,18 @@
             }
             else
             {
+                if(Model.Course.EndDate > DateTime.UtcNow)
+                {
                 <div class="text-muted">This course is already started.</div>
+                }
+
+                else
+                {
+                    <div class="text-muted">This course is already finished.</div>
+                }
+
             }
-           
+
 
         }
         else

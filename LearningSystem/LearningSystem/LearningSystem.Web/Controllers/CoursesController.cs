@@ -1,5 +1,6 @@
 ﻿using LearningSystem.Data.Models;
 using LearningSystem.Service;
+using LearningSystem.Service.Models;
 using LearningSystem.Web.Infrastructures.Extensions;
 using LearningSystem.Web.Models.Courses;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +29,7 @@ namespace LearningSystem.Web.Controllers
         {
             var model = new CourseDetailsViewModel
             {
-                Course = await this.courses.ByIdAsync(id)
+                Course = await this.courses.ByIdAsync<CourseDetailsServiceModel>(id)
             };
             
             if(model.Course == null)

@@ -37,6 +37,12 @@
                         <li><a asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a></li>
                         <li><a asp-area="Admin" asp-controller="Courses" asp-action="Create">Add Course</a></li>
                     }
+
+                    @if (User.IsInRole(WebConstants.TrainerRole))
+                    {
+                        <li><a asp-area="" asp-controller="Trainer" asp-action="Courses">Trainer Courses</a></li>
+
+                    }
                     @if (User.IsInRole(WebConstants.BlogAuthorRole))
                     {
 

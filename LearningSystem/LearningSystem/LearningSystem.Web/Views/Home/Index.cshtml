@@ -15,7 +15,7 @@
                 <div class="panel-heading text-center">
                     <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id">@course.Name</a></div>
                 <div class="panel-body text-center">
-                    <img src="http://lorempixel.com/200/200/abstract?a=@Guid.NewGuid()" alt="Alternate Text" />
+                   <!-- <img src="http://lorempixel.com/200/200/abstract?a=@Guid.NewGuid()" alt="Alternate Text" />-->
                     <hr>
                 <span class="small text-right text-primary">Course duration: @((course.EndDate - course.StartDate).TotalDays) days.</span>
                 <hr>
