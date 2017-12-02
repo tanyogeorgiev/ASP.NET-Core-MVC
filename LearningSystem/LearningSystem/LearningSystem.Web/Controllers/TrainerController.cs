@@ -4,13 +4,14 @@ namespace LearningSystem.Web.Controllers
     using LearningSystem.Data.Models;
     using LearningSystem.Service;
     using LearningSystem.Service.Models;
+    using LearningSystem.Web.Infrastructures.Extensions;
     using LearningSystem.Web.Models.Trainer;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
 
-    [Authorize(Roles =WebConstants.TrainerRole)]
+    [Authorize(Roles = WebConstants.TrainerRole)]
     public class TrainerController : Controller
     {
         private readonly ITrainerService trainers;
@@ -40,7 +41,7 @@ namespace LearningSystem.Web.Controllers
             {
                 return NotFound();
             }
-     
+
             return View(new StudentInCourseViewModel()
             {
                 Students = await this.trainers.StudentInCourseAsync(id),
@@ -49,7 +50,7 @@ namespace LearningSystem.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GradeStudent (int id,string studentId, Grade grade)
+        public async Task<IActionResult> GradeStudent(int id, string studentId, Grade grade)
         {
             if (studentId == null)
             {
@@ -61,17 +62,40 @@ namespace LearningSystem.Web.Controllers
                 return BadRequest();
             }
 
-            var success =  await this.trainers.AddGrade(id, studentId, grade);
+            var success = await this.trainers.AddGrade(id, studentId, grade);
 
-            if(!success)
+            if (!success)
             {
                 return BadRequest();
             }
 
             return RedirectToAction(nameof(Students), new { id });
-            
-
 
         }
+
+        public async Task<IActionResult> DownloadExam(int id, string studentId)
+        {
+            if (string.IsNullOrEmpty(studentId))
+            {
+                return BadRequest();
+            }
+
+            var userId = this.userManager.GetUserId(User);
+            if (!await this.trainers.IsTrainer(id, userId))
+            {
+                return BadRequest();
+            }
+
+            var submissionContent = await this.trainers.GetExamSubmission(id, studentId);
+
+            if (submissionContent == null)
+            {
+                TempData.AddErrorMessage("Something get wrong. We can find any submission for the user in this course!");
+                return RedirectToAction(nameof(Students), new { id });
+            }
+
+            return File(submissionContent,"application/zip");
+        }
+        
     }
 }

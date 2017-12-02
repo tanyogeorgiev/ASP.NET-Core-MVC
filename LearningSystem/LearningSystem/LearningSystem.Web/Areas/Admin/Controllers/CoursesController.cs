@@ -47,8 +47,13 @@ namespace LearningSystem.Web.Areas.Admin.Controllers
                 model.Trainers = await GetTrainers();
                 return View(model);
             }
+            var endDate = model.EndDate;
 
-            await this.courses.Create(model.Name, model.Description, model.StartDate, model.EndDate, model.TrainerId);
+            await this.courses.Create(model.Name,
+                model.Description,
+                model.StartDate,
+                new DateTime(endDate.Year,endDate.Month,endDate.Day,23,59,59),
+                model.TrainerId);
             TempData.AddSuccessMessage($"Course {model.Name}, was created successfully");
             return  RedirectToAction(nameof(HomeController.Index), "Home",new {area =string.Empty });
 

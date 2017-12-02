@@ -17,6 +17,7 @@
 
             @if (courseIsEnd)
             {
+                <th>Exam Submission</th>
                 <th>
                     Change Grade
                 </th>
@@ -38,7 +39,8 @@
 
                 @if (courseIsEnd)
                 {
-                    <th>
+                    <td><a asp-action="DownloadExam" asp-route-id="@Model.Course.Id" asp-route-studentid="@student.Id">Download</a></td>
+                    <td>
                         <form asp-action="GradeStudent" method="post" asp-route-id="@Model.Course.Id">
                             <input type="hidden" name="studentId" value="@student.Id" />
                             <div class="row">
@@ -50,7 +52,7 @@
                                 </div>
                             </div>
                         </form>
-                    </th>
+                    </td>
                 }
             </tr>
         }

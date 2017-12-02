@@ -19,5 +19,7 @@ namespace LearningSystem.Service
         Task<bool> SignOutUserAsync(int id, string userId);
 
         Task<IEnumerable<CourseListingServiceModel>> FindAsync(string search);
+
+        Task<bool> SaveExamSubmission(int courseId, string studentId, byte[] examSubmission);
     }
 }

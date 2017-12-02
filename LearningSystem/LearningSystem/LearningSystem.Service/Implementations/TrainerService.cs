@@ -39,6 +39,13 @@ namespace LearningSystem.Service.Implementations
             .ProjectTo<CourseListingServiceModel>()
             .ToListAsync();
 
+        public async Task<byte[]> GetExamSubmission(int courseId, string studentId)
+            => (await this.db
+            .FindAsync<StudenCourse>(courseId, studentId))
+            ?.ExamSubmission;
+
+        
+
         public async Task<bool> IsTrainer(int courseId, string trainerId)
             => await this.db
             .Courses

@@ -1,13 +1,16 @@
-﻿using LearningSystem.Data.Models;
+﻿using LearningSystem.Data;
+using LearningSystem.Data.Models;
 using LearningSystem.Service;
 using LearningSystem.Service.Models;
 using LearningSystem.Web.Infrastructures.Extensions;
 using LearningSystem.Web.Models.Courses;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -83,8 +86,32 @@ namespace LearningSystem.Web.Controllers
             TempData.AddSuccessMessage("Think twice you are welcome again!");
 
             return RedirectToAction(nameof(Details), new { id });
+            
+        }
 
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> SubmitExam(int id,IFormFile exam)
+        {
+            if(!exam.FileName.EndsWith(".zip")
+                || exam.Length > DataConstants.CourseExamSubmissionFileLength)
+            {
+                TempData.AddErrorMessage("Your  file should be a '.zip' dile with no more than 2MB size!");
+                return RedirectToAction(nameof(Details), new { id });
+            }
 
+            var fileContents = await exam.ToByteArrayAsync();
+            var userId = this.userManager.GetUserId(User);
+
+            var success = await this.courses.SaveExamSubmission(id, userId, fileContents);
+
+            if (!success)
+            {
+                return BadRequest();
+            }
+
+            TempData.AddSuccessMessage("Successfull submited exam.");
+            return RedirectToAction(nameof(Details), new { id });
         }
     }
 }

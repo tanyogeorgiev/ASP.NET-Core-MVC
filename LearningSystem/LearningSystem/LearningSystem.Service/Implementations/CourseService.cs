@@ -27,7 +27,7 @@ namespace LearningSystem.Service.Implementations
             => await this.db
             .Courses
             .OrderByDescending(c => c.Id)
-            .Where(c => c.StartDate >= DateTime.UtcNow)
+            .Where(c => c.StartDate <= DateTime.UtcNow || DateTime.UtcNow >= c.EndDate)
             .ProjectTo<CourseListingServiceModel>()
             .ToListAsync();
 
@@ -49,8 +49,20 @@ namespace LearningSystem.Service.Implementations
               .ToListAsync();
         }
 
+        public async Task<bool> SaveExamSubmission(int courseId, string studentId, byte[] examSubmission)
+        {
+            var studentInCourse = await this.db.FindAsync<StudenCourse>(courseId,studentId);
 
+            if (studentInCourse == null)
+            {
+                return false;
+            }
 
+            studentInCourse.ExamSubmission = examSubmission;
+            await this.db.SaveChangesAsync();
+            return true;
+
+        }
 
         public async Task<bool> SignInUserAsync(int courseId, string userId)
         {

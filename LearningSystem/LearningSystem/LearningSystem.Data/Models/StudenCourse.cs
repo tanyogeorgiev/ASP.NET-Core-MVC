@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace LearningSystem.Data.Models
 {
 
@@ -13,6 +15,11 @@ namespace LearningSystem.Data.Models
         public Course Course { get; set; }
 
         public Grade? Grade { get; set; }
+
+        [MaxLength(DataConstants.CourseExamSubmissionFileLength)]
+        public byte[] ExamSubmission { get; set; }
+
+
 
     }
 }
