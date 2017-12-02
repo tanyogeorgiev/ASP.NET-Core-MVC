@@ -8,6 +8,7 @@ namespace LearningSystem.Service.Implementations
     using System.Linq;
     using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
+    using System.Collections.Generic;
 
     public class UserService : IUserService
     {
@@ -16,7 +17,18 @@ namespace LearningSystem.Service.Implementations
         public UserService(LearningSystemDbContext db)
         {
             this.db = db;
-            
+
+        }
+
+        public async Task<IEnumerable<UserListingServiceModel>> FindAsync(string search)
+        {
+            search = search ?? string.Empty;
+            return await this.db
+                .Users
+                .OrderBy(u => u.UserName)
+                .Where(u => u.UserName.ToLower().Contains(search.ToLower()))
+                .ProjectTo<UserListingServiceModel>()
+                .ToListAsync();
         }
 
         public async Task<UserProfileServiceModel> ProfileAsync(string id)

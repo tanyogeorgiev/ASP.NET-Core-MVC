@@ -17,5 +17,7 @@ namespace LearningSystem.Service
         Task<bool> SignInUserAsync(int courseId, string userId);
 
         Task<bool> SignOutUserAsync(int id, string userId);
+
+        Task<IEnumerable<CourseListingServiceModel>> FindAsync(string search);
     }
 }

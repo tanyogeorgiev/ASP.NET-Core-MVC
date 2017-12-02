@@ -14,7 +14,7 @@
         <h4>Trainer: @Model.Course.Trainer</h4>
         @if (User.Identity.IsAuthenticated)
         {
-            if (Model.Course.StartDate > DateTime.UtcNow)
+            if (Model.Course.StartDate > DateTime.UtcNow && Model.Course.EndDate > DateTime.UtcNow)
             {
 
                 if (Model.UserIsSignedInCourse)

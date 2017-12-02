@@ -38,6 +38,20 @@ namespace LearningSystem.Service.Implementations
             .ProjectTo<TModel>()
             .FirstOrDefaultAsync();
 
+        public async Task<IEnumerable<CourseListingServiceModel>> FindAsync(string search)
+        {
+            search = search ?? string.Empty;
+            return await this.db
+              .Courses
+              .OrderByDescending(c => c.Id)
+              .Where(c => c.Name.ToLower().Contains(search.ToLower()))
+              .ProjectTo<CourseListingServiceModel>()
+              .ToListAsync();
+        }
+
+
+
+
         public async Task<bool> SignInUserAsync(int courseId, string userId)
         {
             var course = await GetCourseInfo(courseId, userId);
@@ -73,7 +87,7 @@ namespace LearningSystem.Service.Implementations
             }
 
             var studenInCourse = await this.db
-                  .FindAsync<StudenCourse>(id,userId);
+                  .FindAsync<StudenCourse>(id, userId);
 
             this.db.Remove(studenInCourse);
             await this.db.SaveChangesAsync();
