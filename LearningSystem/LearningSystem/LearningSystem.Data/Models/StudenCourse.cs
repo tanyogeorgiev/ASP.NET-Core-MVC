@@ -12,5 +12,7 @@ namespace LearningSystem.Data.Models
 
         public Course Course { get; set; }
 
+        public Grade? Grade { get; set; }
+
     }
 }
