@@ -7,7 +7,7 @@ namespace BookShop.Services.Models.Book
     using Data.Models;
     using System.Linq;
 
-    public class BookDetailsServiceModel : BookByAuthorServiceModel, IMapFrom<Book>
+    public class BookDetailsServiceModel : BookByAuthorServiceModel, IMapFrom<Book>, IHaveCustomMapping
     {
         public string Author { get; set; }
 

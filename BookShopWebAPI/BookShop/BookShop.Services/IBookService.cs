@@ -21,6 +21,6 @@ namespace BookShop.Services
         
         Task<BookDetailsServiceModel> Details(int id);
 
-        Task<IEnumerable<BookListingServiceModel>> All(string searchText);
+        Task<IEnumerable<BookListingServiceModel>> All(string searchText );
     }
 }

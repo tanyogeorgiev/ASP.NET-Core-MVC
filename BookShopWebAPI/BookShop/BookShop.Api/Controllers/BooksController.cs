@@ -21,7 +21,7 @@ namespace BookShop.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromBody]string search)
+        public async Task<IActionResult> Get([FromQuery] string search = "")
             => this.Ok(await this.books.All(search));
 
         [HttpGet(WebConstants.WithId)]
