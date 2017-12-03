@@ -9,6 +9,7 @@ namespace LearningSystem.Web.Controllers
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using System;
     using System.Threading.Tasks;
 
     [Authorize(Roles = WebConstants.TrainerRole)]
@@ -86,7 +87,7 @@ namespace LearningSystem.Web.Controllers
                 return BadRequest();
             }
 
-            var submissionContent = await this.trainers.GetExamSubmission(id, studentId);
+            var submissionContent = await this.trainers.GetExamSubmissionAsync(id, studentId);
 
             if (submissionContent == null)
             {
@@ -94,7 +95,15 @@ namespace LearningSystem.Web.Controllers
                 return RedirectToAction(nameof(Students), new { id });
             }
 
-            return File(submissionContent,"application/zip");
+            var studentInCourseNames = await this.trainers.StudentInCourseNamesAsync(id, studentId);
+
+            if(studentInCourseNames == null)
+            {
+                TempData.AddErrorMessage("Something get wrong. We can find any submission for the user in this course!");
+                return RedirectToAction(nameof(Students), new { id });
+            }
+
+            return File(submissionContent,"application/zip", $"ExamSubmission-{studentInCourseNames.CourseTitle}-{studentInCourseNames.Username}-{DateTime.UtcNow.ToShortDateString()}");
         }
         
     }

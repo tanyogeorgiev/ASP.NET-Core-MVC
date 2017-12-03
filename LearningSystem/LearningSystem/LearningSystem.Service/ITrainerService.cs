@@ -17,6 +17,8 @@ namespace LearningSystem.Service
 
         Task<bool> AddGrade(int courseId, string studentId, Grade grade);
 
-        Task<byte[]> GetExamSubmission(int courseId, string studentId);
+        Task<byte[]> GetExamSubmissionAsync(int courseId, string studentId);
+
+        Task<StudentInCourseNamesServiceModel> StudentInCourseNamesAsync(int courseId, string studentId);
     }
 }

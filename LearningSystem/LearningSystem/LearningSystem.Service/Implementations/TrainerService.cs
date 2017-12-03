@@ -9,11 +9,11 @@ using LearningSystem.Data.Models;
 
 namespace LearningSystem.Service.Implementations
 {
-   public class TrainerService : ITrainerService
+    public class TrainerService : ITrainerService
     {
         private readonly LearningSystemDbContext db;
 
-       public TrainerService(LearningSystemDbContext db)
+        public TrainerService(LearningSystemDbContext db)
         {
             this.db = db;
 
@@ -39,12 +39,12 @@ namespace LearningSystem.Service.Implementations
             .ProjectTo<CourseListingServiceModel>()
             .ToListAsync();
 
-        public async Task<byte[]> GetExamSubmission(int courseId, string studentId)
+        public async Task<byte[]> GetExamSubmissionAsync(int courseId, string studentId)
             => (await this.db
             .FindAsync<StudenCourse>(courseId, studentId))
             ?.ExamSubmission;
 
-        
+
 
         public async Task<bool> IsTrainer(int courseId, string trainerId)
             => await this.db
@@ -58,5 +58,20 @@ namespace LearningSystem.Service.Implementations
             .SelectMany(c => c.Students.Select(s => s.Student))
             .ProjectTo<StudentInCourseServiceModel>(new { courseId })
             .ToListAsync();
+
+        public async Task<StudentInCourseNamesServiceModel> StudentInCourseNamesAsync(int courseId, string studentId)
+        {
+            var userName = await this.db.Users.Where(u => u.Id == studentId).Select(u => u.UserName).FirstOrDefaultAsync();
+            var courseName = await this.db.Courses.Where(c => c.Id == courseId).Select(c => c.Name).FirstOrDefaultAsync();
+
+            return new StudentInCourseNamesServiceModel
+            {
+                Username = userName,
+                CourseTitle = courseName
+            };
+
+        }
     }
+
+
 }
