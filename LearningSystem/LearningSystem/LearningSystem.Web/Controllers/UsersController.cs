@@ -1,5 +1,6 @@
 ﻿using LearningSystem.Data.Models;
 using LearningSystem.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -29,6 +30,20 @@ namespace LearningSystem.Web.Controllers
             var profile = await users.ProfileAsync(user.Id);
 
             return View(profile);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> DownloadCertificate(int id)
+        {
+            var userId = this.userManager.GetUserId(User);
+
+            var certificate =  await this.users.GetPdfCertificate(id, userId);
+
+            if(certificate == null)
+            {
+                return BadRequest();
+            }
+            return  File(certificate, "application/pdf","Certificate.pdf");
         }
     }
 }

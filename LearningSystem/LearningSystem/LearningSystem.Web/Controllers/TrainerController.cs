@@ -103,7 +103,7 @@ namespace LearningSystem.Web.Controllers
                 return RedirectToAction(nameof(Students), new { id });
             }
 
-            return File(submissionContent,"application/zip", $"ExamSubmission-{studentInCourseNames.CourseTitle}-{studentInCourseNames.Username}-{DateTime.UtcNow.ToShortDateString()}");
+            return File(submissionContent,"application/zip", $"ExamSubmission-{studentInCourseNames.CourseTitle}-{studentInCourseNames.Username}-{DateTime.UtcNow.ToString("yyyyMMdd")}.zip");
         }
         
     }
