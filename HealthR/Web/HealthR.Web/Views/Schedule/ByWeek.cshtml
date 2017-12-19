@@ -1,0 +1,230 @@
+﻿@model AppointmentViewModel
+@{
+    ViewBag.Title = "Index";
+    var currentDateTime = Model.FirstDayOfWeek;
+    var zeroTimeDate = new DateTime(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day, 0, 0, 0);
+
+    //  var firstWeekDate = zeroTimeDate.AddDays(-Convert.ToInt32(zeroTimeDate.DayOfWeek)>0 ? +1 : 0);
+    var firstWeekDate = zeroTimeDate;
+    var lastWeekDate = firstWeekDate.AddDays(5);
+
+
+
+}
+
+
+<h2 class="text-center"> SCHEDULE</h2>
+<h2 class="text-center"> @firstWeekDate.ToShortDateString() - @lastWeekDate.ToShortDateString()</h2>
+
+<div class="container-fluid">
+    <hr />
+    <div class="row justify-content-around">
+        <div class="col-md-3">
+            <form class="form-inline" method="get" asp-controller="schedule" asp-action="ByWeek">
+
+                <div class="form-group">
+
+                    <input type="hidden" placeholder="Enter week..." asp-for="WeekNumber" value="@(Model.WeekNumber-1)" class="form-control" />
+               
+                </div>
+
+                <input type="submit" value="Previous Week" class="btn btn-primary btn-sm btn-block" />
+
+
+            </form>
+
+
+
+        </div>
+        <div class="col-md-6 text-center">
+
+            <form class="form-inline" method="get" asp-controller="schedule" asp-action="ByWeek">
+
+           
+
+                <div class="form-group">
+                    <label asp-for="WeekNumber"></label>
+                    <input placeholder="Enter week..." asp-for="WeekNumber" id="toClear" class="form-control" />
+
+                </div>
+
+                <input type="submit" value="View" class="btn btn-primary  " />
+            </form>
+
+
+        </div>
+        <div class="col-md-3">
+            <form class="form-inline" method="get" asp-controller="schedule" asp-action="ByWeek">
+
+                <div class="form-group">
+                    <label hidden asp-for="WeekNumber"></label>
+                    <input  type ="hidden" asp-for="WeekNumber" value="@(Model.WeekNumber+1)" class="form-control" />
+               
+                </div>
+
+                <input type="submit" value="Next Week" class="btn btn-primary btn-sm btn-block" />
+
+
+            </form>
+
+        </div>
+    </div>
+  
+    <table class="table table-hover table-bordered table-condensed ">
+        <thead>
+            <tr>
+                <th class="text-center">Hours</th>
+                <th class="text-center"><p>@firstWeekDate.DayOfWeek</p>@firstWeekDate.ToShortDateString()</th>
+                <th class="text-center"><p>@firstWeekDate.AddDays(1).DayOfWeek </p>@firstWeekDate.AddDays(1).ToShortDateString()</th>
+                <th class="text-center"><p>@firstWeekDate.AddDays(2).DayOfWeek </p>@firstWeekDate.AddDays(2).ToShortDateString()</th>
+                <th class="text-center"><p>@firstWeekDate.AddDays(3).DayOfWeek </p>@firstWeekDate.AddDays(3).ToShortDateString()</th>
+                <th class="text-center"><p>@firstWeekDate.AddDays(4).DayOfWeek </p>@firstWeekDate.AddDays(4).ToShortDateString()</th>
+                <th class="text-center"><p>@firstWeekDate.AddDays(5).DayOfWeek </p>@firstWeekDate.AddDays(5).ToShortDateString()</th>
+                <th class="text-center"><p>@firstWeekDate.AddDays(6).DayOfWeek </p>@firstWeekDate.AddDays(6).ToShortDateString()</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @{
+                for (int i = 8; i < 17; i++)
+                {
+
+                    for (int k = 0; k < 60; k += 15)
+                    {
+                        <tr>
+
+
+                            @for (int j = 0; j < 7; j++)
+                            {
+                                var currentDateAndTime = firstWeekDate.AddDays(j).AddHours(i).AddMinutes(k);
+
+                                if (j == 0)
+                                {
+                                    <td>@currentDateAndTime.ToShortTimeString()</td>
+
+                                }
+
+                                <td data-toggle="modal" data-target="#modal" data-title="" data-description="" data-date="@currentDateAndTime" data-appointmentid="">
+                                    <!--<span class="badge badge-pill badge-info">@currentDateAndTime</span>-->
+
+                                </td>
+
+                            }
+
+                        </tr>
+                    }
+
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Add new appointment</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-controller="schedule" asp-action="NewAppointment"
+                      data-ajax-begin="onBegin" data-ajax-complete="onComplete"
+                      data-ajax-failure="onFailed" data-ajax-success="onSuccess"
+                      data-ajax="true" data-ajax-method="POST">
+
+                 
+                    <div class="form-group">
+                        <label asp-for="Title"></label>
+                        <input placeholder="Enter title..." asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Description"></label>
+                        <input rows="3" placeholder="Enter description..." asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label asp-for="StartDate"></label>
+                        <input readonly placeholder="Enter description..." asp-for="StartDate" class="form-control" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <div id="Results"></div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+
+        var results = $("#Results");
+        var onBegin = function () {
+
+        };
+
+        var onComplete = function () {
+            results.html("");
+        };
+
+        var onSuccess = function (context) {
+            alert(context);
+        };
+
+        var onFailed = function (context) {
+            alert("Failed");
+        };
+        var ai = "13.12.2017 г. 11:00:00"
+
+        var a = $('td[data-date*="' + ai + '"]')
+        a.css('background-color', '#EE178C')
+
+
+        $('input[id="toClear"]').val('')
+        $('#modal').on('show.bs.modal', function (event) {
+            
+            var cell = $(event.relatedTarget) // Button that triggered the modal
+            // Extract info from data-* attributes
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+
+
+            var currentDateTime = cell.data('date')
+            var title = cell.data('title')
+            var description = cell.data('description')
+             
+            //  var fulldate = new Date(year,month,day,hour, minutes, 0)
+            var modal = $(this)
+
+           
+            modal.find('.modal-body input[name="Title"]').val(title)
+            modal.find('.modal-body input[name="Description"]').val(description)
+            modal.find('.modal-body input[name="StartDate"]').val(currentDateTime)
+
+            var $form = modal.find("form")
+            console.dir($form)
+           var $inputs = $form.find(".field-validation-error");
+            console.log($inputs)
+            $inputs.each(function () {
+                $(this).empty()
+            });
+
+            
+        })
+    </script>
+
+}

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20171216213758_InitialModelTables.cs" />
+    <Compile Remove="Migrations\20171216222358_InitialModelsTable.cs" />
+    <Compile Remove="Migrations\20171216222732_InitialModelsTable.cs" />
+    <Compile Remove="Migrations\20171217074230_InitialModelsTable.cs" />
+    <Compile Remove="Migrations\20171217075736_InitialModelsTable.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HealthR.Data.Models\HealthR.Data.Models.csproj" />
+  </ItemGroup>
+
+</Project>
