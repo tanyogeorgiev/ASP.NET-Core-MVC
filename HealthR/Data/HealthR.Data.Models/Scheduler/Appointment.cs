@@ -28,6 +28,8 @@ namespace HealthR.Data.Models.Scheduler
 
         public List<ScheduleAppointmentRequest> RequestedSchedules { get; set; } = new List<ScheduleAppointmentRequest>();
 
+        public bool IsDeleted { get; set; } = false;
+
 
     }
 }

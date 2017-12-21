@@ -158,5 +158,40 @@ td:hover {
 }
 
 .table > tbody > tr > td {
-    vertical-align: middle; !important
+    vertical-align: middle !important
+}
+
+
+.flyover.in {
+    left: 50%
+
+}
+
+
+.flyover-centered {
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+ .flyover-bottom {
+    bottom: 10px;
+}
+
+.flyover {
+    right: 0% ;
+    overflow: hidden;
+    position: fixed;
+    width: 50%;
+    opacity: 0.7;
+    z-index: 1050;
+    transition: left 0.6s ease-out 0s;
+}
+.table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.table {
+    table-layout: fixed;
 }

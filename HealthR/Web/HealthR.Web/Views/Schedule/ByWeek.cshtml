@@ -1,17 +1,27 @@
-﻿@model AppointmentViewModel
+﻿@model UserScheduleViewModel
 @{
     ViewBag.Title = "Index";
-    var currentDateTime = Model.FirstDayOfWeek;
+    var currentDateTime = Model.Week.FirstDayOfWeek;
     var zeroTimeDate = new DateTime(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day, 0, 0, 0);
 
     //  var firstWeekDate = zeroTimeDate.AddDays(-Convert.ToInt32(zeroTimeDate.DayOfWeek)>0 ? +1 : 0);
     var firstWeekDate = zeroTimeDate;
     var lastWeekDate = firstWeekDate.AddDays(5);
+    var tmpAppId = 0;
+    if (TempData.ContainsKey("appointmentId"))
+    {
+        tmpAppId = (int)TempData["appointmentId"];
+
+    }
 
 
 
 }
 
+@Model.Week.WeekNumber
+<div id="notificationBox">
+
+</div>
 
 <h2 class="text-center"> SCHEDULE</h2>
 <h2 class="text-center"> @firstWeekDate.ToShortDateString() - @lastWeekDate.ToShortDateString()</h2>
@@ -24,8 +34,8 @@
 
                 <div class="form-group">
 
-                    <input type="hidden" placeholder="Enter week..." asp-for="WeekNumber" value="@(Model.WeekNumber-1)" class="form-control" />
-               
+                    <input type="hidden" placeholder="Enter week..." asp-for="Week.WeekNumber" value="@(Model.Week.WeekNumber-1)" class="form-control" />
+
                 </div>
 
                 <input type="submit" value="Previous Week" class="btn btn-primary btn-sm btn-block" />
@@ -40,11 +50,11 @@
 
             <form class="form-inline" method="get" asp-controller="schedule" asp-action="ByWeek">
 
-           
+
 
                 <div class="form-group">
-                    <label asp-for="WeekNumber"></label>
-                    <input placeholder="Enter week..." asp-for="WeekNumber" id="toClear" class="form-control" />
+                    <label asp-for="Week.WeekNumber"></label>
+                    <input placeholder="Enter week..." asp-for="Week.WeekNumber" id="toClear" class="form-control" />
 
                 </div>
 
@@ -57,9 +67,9 @@
             <form class="form-inline" method="get" asp-controller="schedule" asp-action="ByWeek">
 
                 <div class="form-group">
-                    <label hidden asp-for="WeekNumber"></label>
-                    <input  type ="hidden" asp-for="WeekNumber" value="@(Model.WeekNumber+1)" class="form-control" />
-               
+                    <label hidden asp-for="Week.WeekNumber"></label>
+                    <input type="hidden" asp-for="Week.WeekNumber" value="@(Model.Week.WeekNumber+1)" class="form-control" />
+
                 </div>
 
                 <input type="submit" value="Next Week" class="btn btn-primary btn-sm btn-block" />
@@ -69,7 +79,7 @@
 
         </div>
     </div>
-  
+
     <table class="table table-hover table-bordered table-condensed ">
         <thead>
             <tr>
@@ -103,10 +113,25 @@
 
                                 }
 
-                                <td data-toggle="modal" data-target="#modal" data-title="" data-description="" data-date="@currentDateAndTime" data-appointmentid="">
-                                    <!--<span class="badge badge-pill badge-info">@currentDateAndTime</span>-->
+                                var appointment = Model.Appointments.Where(a => Convert.ToDateTime(a.StartTime) == currentDateAndTime).FirstOrDefault();
 
-                                </td>
+                                if (appointment != null)
+                                {
+                                    <td class="success" data-editorsave="edit" data-toggle="modal" data-target="#modal"data-time="@Convert.ToDateTime(currentDateAndTime).TimeOfDay" data-day="@currentDateAndTime.Year-@currentDateAndTime.Month-@currentDateAndTime.Day" data-id="@appointment.Id" data-title="@appointment.Title" data-description="@appointment.Description" data-date="@currentDateAndTime" data-appointmentid="">
+                                       <span class="glyphicon glyphicon-bookmark" style="color:#ff6262;top:0;float:left"></span> <span>@appointment.Title </span>
+
+                                    </td>
+                                }
+
+                                else
+                                {
+                                    @:<td data-toggle="modal" data-editorsave="save"  data-target="#modal" data-title="" data-description="" data-date="@currentDateAndTime" data-appointmentid=""></td>
+
+
+                                }
+
+
+
 
                             }
 
@@ -115,6 +140,7 @@
 
                 }
             }
+
         </tbody>
     </table>
 </div>
@@ -125,36 +151,60 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Add new appointment</h4>
+                <h4 class="modal-title" id="ModalLabel">Add new appointment</h4>
             </div>
             <div class="modal-body">
-                <form method="post" asp-controller="schedule" asp-action="NewAppointment"
-                      data-ajax-begin="onBegin" data-ajax-complete="onComplete"
-                      data-ajax-failure="onFailed" data-ajax-success="onSuccess"
-                      data-ajax="true" data-ajax-method="POST">
+                <form method="post" asp-controller="schedule" asp-action="NewAppointment">
 
-                 
                     <div class="form-group">
-                        <label asp-for="Title"></label>
-                        <input placeholder="Enter title..." asp-for="Title" class="form-control" />
-                        <span asp-validation-for="Title" class="text-danger"></span>
+                        <label hidden asp-for="EditAppointment.Id"></label>
+                        <input type="hidden" asp-for="EditAppointment.Id" />
+
+                    </div>
+                   
+
+                    <div class="form-group">
+
+                        <label asp-for="EditAppointment.Title"></label>
+                        <input required asp-for="EditAppointment.Title" placeholder="Enter title..." class="form-control" />
+                        <span asp-validation-for="EditAppointment.Title" class="form-text text-danger"></span>
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Description"></label>
-                        <input rows="3" placeholder="Enter description..." asp-for="Description" class="form-control" />
-                        <span asp-validation-for="Description" class="text-danger"></span>
+                        <label asp-for="EditAppointment.Description"></label>
+                        <input required rows="3" asp-for="EditAppointment.Description" placeholder="Enter description..." class="form-control" />
+                        <span asp-validation-for="EditAppointment.Description" class="form-text text-danger"></span>
                     </div>
 
 
                     <div class="form-group">
-                        <label asp-for="StartDate"></label>
-                        <input readonly placeholder="Enter description..." asp-for="StartDate" class="form-control" />
-                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                        <label asp-for="EditAppointment.StartTime"></label>
+                        <input readonly asp-for="EditAppointment.StartTime" placeholder="Enter description..." class="form-control" />
+                        <span asp-validation-for="EditAppointment.StartTime" class="form-text text-danger"></span>
                     </div>
 
-                    <input type="submit" value="Save" class="btn btn-primary" />
-                    <div id="Results"></div>
+                    <div class="form-group toEdit" hidden>
+                        <label asp-for="EditAppointment.NewStartDay"></label>
+                        <input asp-for="EditAppointment.NewStartDay" class="form-control" />
+                        <span asp-validation-for="EditAppointment.NewStartDay" class="form-text text-danger"></span>
+                    </div>
+
+                    <div class="form-group toEdit" hidden>
+                        <label asp-for="EditAppointment.NewStartTime"></label>
+                        <input class="form-control" type="time" name="EditAppointment.NewStartTime" step="900"
+                               min="08:00" max="16:45">
+
+                        <span asp-validation-for="EditAppointment.NewStartTime" class="form-text text-danger"></span>
+                    </div>
+
+                    <div class="row justify-content-around">
+                        <div class="col-md-4">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+                        <div class="col-md-4 toEdit">
+                            <a id ="deleteme" asp-controller="schedule" asp-action="DeleteAppointment"  class=" btn btn-danger ">Delete</a>
+                        </div>
+                    </div>
                 </form>
 
             </div>
@@ -170,7 +220,7 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-    <script>
+<script>
 
         var results = $("#Results");
         var onBegin = function () {
@@ -182,49 +232,101 @@
         };
 
         var onSuccess = function (context) {
-            alert(context);
+        //    $('#message1').toggleClass('in');
+            $('#modal').modal('hide');
+            // $('#notificationBox').html('<div class="alert alert-success fade in"><strong>Success!</strong> Appointment was already added to the schedule! </div>').fadeIn(800).delay(1200).slideUp(800);
+        //    location.reload();
+
         };
 
         var onFailed = function (context) {
-            alert("Failed");
+           $('#modal').modal('hide');
+
+          //  $('#notificationBox').html('<div class="alert alert-danger fade in"><strong>Faild!</strong> Appointment wa not added to the schedule! </div>').fadeIn(800).delay(2000).slideUp(800);
         };
         var ai = "13.12.2017 г. 11:00:00"
 
         var a = $('td[data-date*="' + ai + '"]')
         a.css('background-color', '#EE178C')
 
+            
+        $(document).ready(function () {
+
+            if (@tmpAppId != 0) {
+                $('td[data-id="' + @tmpAppId+'"]').click()
+
+            }
+        })
 
         $('input[id="toClear"]').val('')
         $('#modal').on('show.bs.modal', function (event) {
-            
+
             var cell = $(event.relatedTarget) // Button that triggered the modal
             // Extract info from data-* attributes
             // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
             // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
 
 
+            var appointmentId = cell.data('id')
             var currentDateTime = cell.data('date')
             var title = cell.data('title')
             var description = cell.data('description')
-             
+            var editOrSave = cell.data('editorsave')
+            var currentDate = cell.data('day')
+            var currentTime = cell.data('time')
+
+
+
             //  var fulldate = new Date(year,month,day,hour, minutes, 0)
             var modal = $(this)
-
-           
-            modal.find('.modal-body input[name="Title"]').val(title)
-            modal.find('.modal-body input[name="Description"]').val(description)
-            modal.find('.modal-body input[name="StartDate"]').val(currentDateTime)
-
             var $form = modal.find("form")
-            console.dir($form)
-           var $inputs = $form.find(".field-validation-error");
-            console.log($inputs)
+
+            if (editOrSave == 'edit') {
+        
+                modal.find("#ModalLabel").html('Edint or delete Appointment!')
+                modal.find("form").find('input[type="submit"]').val('Change')
+                modal.find("form").find('.toEdit').attr('hidden', false)
+
+                $form.attr("action", "/schedule/EditAppointment")
+                 var href = modal.find("#deleteme").attr("href")
+                console.log(appointmentId)
+                var appendToHref = '?id='+appointmentId+'&week='+@Model.Week.WeekNumber+''
+                href = href + appendToHref
+                modal.find("#deleteme").attr("href", href)
+
+            }
+
+            else if (editOrSave == 'save') {
+                modal.find("#deleteme").attr("href", 'schedule/DeleteAppointment')
+                modal.find("form").find('input[type="submit"]').val('Save')
+                modal.find("form").find('.toEdit').attr('hidden', true)
+                $form.attr("action", "/schedule/NewAppointment")
+
+            }
+
+
+            modal.find('.modal-body input[name="EditAppointment.Id"]').val(appointmentId)
+
+
+            modal.find('.modal-body input[name="EditAppointment.Title"]').val(title)
+            modal.find('.modal-body input[name="EditAppointment.Description"]').val(description)
+            modal.find('.modal-body input[name="EditAppointment.StartTime"]').val(currentDateTime)
+            modal.find('.modal-body input[name="EditAppointment.NewStartTime"]').attr('value', currentTime)
+            modal.find('.modal-body input[name="EditAppointment.NewStartDay"]').val(currentDate)
+
+
+
+            var $inputs = $form.find(".field-validation-error");
+
+
+
+
             $inputs.each(function () {
                 $(this).empty()
             });
 
-            
+
         })
-    </script>
+</script>
 
 }

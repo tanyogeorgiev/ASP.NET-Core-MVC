@@ -11,6 +11,10 @@ namespace HealthR.Web.Controllers
     using System;
     using System.Globalization;
     using System.Threading.Tasks;
+    using HealthR.Web.Infrastructure.Exstensions;
+    using AutoMapper;
+    using System.Collections.Generic;
+    using HealthR.Services.Data.Models;
 
     [Authorize]
     public class ScheduleController : BaseController
@@ -25,49 +29,131 @@ namespace HealthR.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult ByWeek(AppointmentViewModel model)
+        public async Task<IActionResult> ByWeek(UserScheduleViewModel model)
         {
 
-            var week = model.WeekNumber;
+            var week = model.Week.WeekNumber;
             if (week == 0)
             {
                 week = GetWeek(DateTime.UtcNow);
 
             }
-            var modelin = new AppointmentViewModel
-            {
-                FirstDayOfWeek = GetDateByWeek(week),
-                WeekNumber = week
-            };
 
-            return View(modelin);
+            var userSchedule = await PrepareResult(week);
+
+            return View(userSchedule);
         }
 
+       
 
+        [HttpPost]
+        public async Task<IActionResult> NewAppointment(UserScheduleViewModel model)
+        {
+
+            if (String.IsNullOrEmpty(model.EditAppointment.Title)
+                || String.IsNullOrEmpty(model.EditAppointment.Description)
+                || String.IsNullOrEmpty(model.EditAppointment.StartTime))
+            {
+                this.TempData.AddErrorMessage($"Appointment was NOT created successfully");
+
+                return RedirectToAction(nameof(ByWeek));
+            }
+
+            var userId = this.userManager.GetUserId(User);
+
+            var result = await this.appointments.AddAppointment(
+                model.EditAppointment.Title,
+                model.EditAppointment.Description,
+                Convert.ToDateTime(model.EditAppointment.StartTime),
+                userId);
+
+            this.TempData.AddSuccessMessage($"Appointment was created successfully");
+
+
+            return RedirectToAction(nameof(ByWeek));
+        }
 
 
         [HttpPost]
-        public async Task<JsonResult> NewAppointment(AppointmentViewModel model)
+        public async Task<IActionResult> EditAppointment(UserScheduleViewModel model)
         {
-            var userId =  this.userManager.GetUserId(User);
 
-            var result = await this.appointments.AddAppointment(
-                model.Title,
-                model.Description,
-                Convert.ToDateTime(model.StartDate),
-                userId);
+            var newDateTime = new DateTime(
+                model.EditAppointment.NewStartDay.Year,
+                model.EditAppointment.NewStartDay.Month,
+                model.EditAppointment.NewStartDay.Day,
+                model.EditAppointment.NewStartTime.Hour,
+                model.EditAppointment.NewStartTime.Minute,
+                0);
 
-            var jsonResult = new
+            var currentStartDateTime = Convert.ToDateTime(model.EditAppointment.StartTime);
+
+            if (newDateTime != currentStartDateTime)
+            { 
+            var validationChecks = await this.appointments.AlreadyScheduled(newDateTime);
+
+         
+
+
+            if (validationChecks)
             {
-                success = result
-            };
+                this.TempData.AddErrorMessage($"Already has appointment for this date and time!");
+                    TempData["appointmentId"] = model.EditAppointment.Id;
+                return RedirectToAction(nameof(ByWeek));
+            }
 
-            return Json(jsonResult);
+            }
+            await this.appointments.Edit(
+                model.EditAppointment.Id,
+                model.EditAppointment.Title,
+                model.EditAppointment.Description,
+                newDateTime);
+
+            
+
+
+
+            this.TempData.AddSuccessMessage($"Appointment was edited successfully");
+
+            var week = GetWeek(Convert.ToDateTime(model.EditAppointment.StartTime));
+            var userSchedule = await PrepareResult(week);
+            return View(nameof(ByWeek),userSchedule);
+           
+        }
+
+        public async Task<IActionResult> DeleteAppointment (string id,string week)
+        {
+           
+           
+            if (String.IsNullOrEmpty(id)
+                || String.IsNullOrEmpty(week) )
+            {
+                this.TempData.AddErrorMessage($"APPOINTMENT WAS NOT DELETED!");
+               
+            }
+
+            var exist = await this.appointments.IsExistById(int.Parse(id));
+             if (!exist)
+            {
+                this.TempData.AddErrorMessage($"APPOINTMENT WAS NOT DELETED!");
+
+            }
+
+            else
+            {
+                await this.appointments.DeleteById(int.Parse(id));
+            }
+
+
+            this.TempData.AddSuccessMessage($"Appointment was deleted successfully");
+
+            var userSchedule = await PrepareResult(int.Parse(week));
+            return View(nameof(ByWeek), userSchedule);
         }
 
 
-
-
+        
+        //    HELPER METHODS BELOW
 
         private DateTime GetDateByWeek(int week)
         {
@@ -110,6 +196,27 @@ namespace HealthR.Web.Controllers
             firstdayofweek);
         }
 
+
+        private async Task<UserScheduleViewModel> PrepareResult(int week)
+        {
+            string userId = this.userManager.GetUserId(User);
+            var appointments = await this.appointments.GetAllByUser(userId);
+
+            var appointmentsViewModel = Mapper.Map<IEnumerable<AppointmentServiceModel>, IList<AppointmentViewModel>>(appointments);
+            var weekViewModel = new WeeksViewModel
+            {
+                FirstDayOfWeek = GetDateByWeek(week),
+                WeekNumber = week,
+            };
+
+            var userSchedule = new UserScheduleViewModel
+            {
+                Week = weekViewModel,
+                Appointments = appointmentsViewModel
+
+            };
+            return userSchedule;
+        }
 
     }
 }

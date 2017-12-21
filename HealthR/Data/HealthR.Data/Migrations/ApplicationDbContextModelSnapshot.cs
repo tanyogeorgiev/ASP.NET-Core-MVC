@@ -114,6 +114,8 @@ namespace HealthR.Data.Migrations
 
                     b.Property<DateTime>("EndTime");
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<DateTime>("StartTime");
 
                     b.Property<string>("Title")

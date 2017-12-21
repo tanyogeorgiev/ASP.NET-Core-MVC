@@ -39,6 +39,23 @@
         </div>
     </nav>
     <div class="container body-content">
+      
+        @if (TempData.ContainsKey(WebConstants.TempDataSuccessMessageKey))
+        {
+            <div class="alert alert-success flyover flyover-bottom ">
+                <h1> @TempData[WebConstants.TempDataSuccessMessageKey]</h1>
+
+            </div>
+        }
+
+        @if (TempData.ContainsKey(WebConstants.TempDataErrorMessageKey))
+        {
+            <div id="alertdanger" class="alert alert-danger flyover flyover-bottom ">
+                <h1> @TempData[WebConstants.TempDataErrorMessageKey]</h1>
+
+            </div>
+        }
+
         @RenderBody()
         <hr />
         <footer>
@@ -70,7 +87,19 @@
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
+    <script>
+        (function () {
+            var a = $('.alert')
 
+            $(a).hide().delay(50).slideDown(300).delay(2500).slideUp(800)
+
+        })()
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
+@section Scripts {
+
+    
+    }
