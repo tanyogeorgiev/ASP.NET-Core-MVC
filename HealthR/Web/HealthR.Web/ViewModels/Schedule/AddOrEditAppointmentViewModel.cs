@@ -14,7 +14,7 @@ namespace HealthR.Web.ViewModels.Schedule
         public DateTime NewStartDay { get; set; }
 
         [DataType(DataType.Time)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:H:mm}")]
         [Display(Name = "Change appointment time to:")]
         public DateTime NewStartTime { get; set; }
     }

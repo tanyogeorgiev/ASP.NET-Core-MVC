@@ -152,14 +152,15 @@ a.grayText {
 div .text-danger.validation-summary-errors{
     text-align:left !important;
 }
-
-td:hover {
+/*
+td.schedule:hover {
     background-color: #0094ff !important
 }
-
+*/
 .table > tbody > tr > td {
     vertical-align: middle !important
 }
+
 
 
 .flyover.in {
@@ -191,7 +192,49 @@ td:hover {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    
 }
+
 .table {
     table-layout: fixed;
+}
+
+
+.darker
+{
+    background-color:#3a3a45 !important
+}
+
+.pinker {
+    background-color: #e06767 !important
+}
+
+
+.table.schedule > tbody > tr > td:hover {
+    background-color: #0094ff;
+    cursor: pointer
+}
+
+.table.schedule > tbody > tr > td.success:hover {
+    background-color: #3a3a45;
+    cursor: pointer;
+    color:white;
+}
+.ui-autocomplete {
+    z-index: 2147483647;
+}
+
+
+    .ui-autocomplete.ui-front {
+        z-index: 2147483647 !important;
+    }
+
+
+div .hiddenDiv {
+    display:none !important;
+}
+
+
+.floatright{
+    float:right
 }

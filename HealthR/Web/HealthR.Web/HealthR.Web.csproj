@@ -27,4 +27,8 @@
     <ProjectReference Include="..\..\Services\HealthR.Services.Data\HealthR.Services.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Doctor\Data\" />
+  </ItemGroup>
+
 </Project>

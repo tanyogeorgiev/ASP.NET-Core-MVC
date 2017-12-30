@@ -1,0 +1,232 @@
+﻿@model IEnumerable<DoctorPatientServiceModel>
+@{
+    ViewData["Title"] = "Manage patients";
+}
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<div class="well">
+    <h2 class="text-left text-primary">@ViewData["Title"]</h2>
+    <div data-toggle="modal" data-target="#modal" class="btn btn-primary"> Add new Patient </div>
+</div>
+@if (Model.Count() > 0)
+{
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+
+                <th class="text-center">
+                    Patient name
+                </th>
+                <th class="text-center">
+                    E-mail
+                </th>
+                <th class="text-center">
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+
+                    <td class="text-center">
+                        @user.Name
+                    </td>
+                    <td class="text-center">
+                        @(user.Email)
+                    </td>
+                    <td class="text-center">
+                        <form asp-area="Doctor" asp-controller="Patients" asp-action="GetPatientDetails"
+                              data-ajax-begin="onBegin" data-ajax-complete="onComplete"
+                              data-ajax-failure="onFailed" data-ajax-success="onSuccess"
+                              data-ajax="true" data-ajax-method="GET">
+                            <input hidden name="id" type="text" value="@user.Id">
+                            <input data-toggle="modal" data-target="#patientModal" type="submit" value="Manage" class="btn btn-primary" />
+
+                        </form>
+                    </td>
+
+                </tr>
+            }
+
+
+        </tbody>
+    </table>
+}
+else
+{
+    <h3>No patients!</h3>
+}
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="ModalLabel">Add new patient</h4>
+            </div>
+            <div class="modal-body">
+
+                <form asp-controller="Patients" asp-action="AddNewPatient" asp-area="Doctor" method="post">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6">
+                            <label for="Name">Enter patient name:</label>
+                            <input class="form-control" type="text" id="txtCustomer" name="Name" />
+                            <input hidden type="text" id="hfCustomer" name="Id" />
+
+                        </div>
+                        <div id="profileBox" class="col-sm-6 col-md-6 ">
+                            <div class="thumbnail hiddenDiv">
+                                <img id="patientProfileThumbnail" src="..." alt="">
+                                <div class="caption">
+                                    <h3 id="patientName"></h3>
+                                    <p id="patientBirthdate"></p>
+                                    <p id="patientEmail"></p>
+                                    <div class="text-right">
+                                        <input type="submit" value="ADD" class="btn btn-success btn-sm text-right" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="patientModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="ModalLabel">Patient details</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+
+
+                    <div id="profileBox" class="col-sm-6 col-md-6 ">
+                        <div class="thumbnail hiddenDiv">
+                            <img id="patientDetailsProfileThumbnail" src="..." alt="">
+                            <div class="caption">
+                                <h3 id="patientDetailsName"></h3>
+                                <p id="patientDetailsBirthdate"></p>
+                                <p id="patientDetailsEmail"></p>
+                                <div id="patientDetailsPhoneNumber"></div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="text-left">
+                            <form asp-controller="Patients" asp-action="DeletePatient" asp-area="Doctor" method="post">
+                                <input hidden type="text" id="patientDetailsId" name="Id" />
+                                <div class="text-right">
+                                    <input type="submit" value="DELETE" class="btn btn-danger btn-sm text-right" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $("div.thumbnail").toggleClass('hiddenDiv', true)
+        $(function () {
+            $("#txtCustomer").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Doctor/Patients/AutoComplete/',
+                        data: "{ 'prefix': '" + request.term + "'}",
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+
+                            response($.map(data, function (item) {
+                                return item;
+
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                select: function (e, i) {
+                    $("div.thumbnail").toggleClass('hiddenDiv', false)
+                    $("#hfCustomer").val(i.item.id);
+                    $("#patientName").html(i.item.value);
+                    $("#patientEmail").html(i.item.email);
+                    $("#patientBirthdate").html(i.item.birthdate);
+                    $("#patientProfileThumbnail").attr("src", "images/" + i.item.icon);
+                },
+                minLength: 1
+            })
+                .autocomplete("instance")._renderItem = function (ul, item) {
+                    return $("<li>")
+                        .append("<div>" + item.label + "<br>" + item.email + "</div>")
+                        .appendTo(ul);
+                }
+        });
+
+        var results = $("#Results");
+        var onBegin = function () {
+            results.html("<img src=\"/images/ajax-loader.gif\" alt=\"Loading\" />");
+        };
+        var onComplete = function () {
+            results.html("");
+        };
+
+        var onSuccess = function (patient) {
+            var phonenumber = patient.phoneNumber === null ? 'Phone: N/A' : patient.phoneNumber
+            console.log(patient)
+            $("div.thumbnail").toggleClass('hiddenDiv', false)
+            $("#patientDetailsId").val(patient.id);
+            $("#patientDetailsName").html(patient.userName);
+            $("#patientDetailsEmail").html(patient.email);
+            $("#patientDetailsBirthdate").html(patient.birthdate);
+            $("#patientDetailsPhoneNumber").html('<a href=callto:' + phonenumber + '/>' + phonenumber + '</a>');
+            $("#patientDetailsProfileThumbnail").attr("src", "images/" + patient.icon);
+
+
+
+        };
+
+        var onFailed = function (context) {
+            alert("Failed");
+        };
+    </script>
+}

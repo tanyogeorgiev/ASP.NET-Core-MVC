@@ -12,8 +12,7 @@ namespace HealthR.Web.Controllers
     using Microsoft.Extensions.Logging;
     using HealthR.Data.Models;
     using HealthR.Web.Models.AccountViewModels;
-
-
+    using HealthR.Web.Areas.Admin.Controllers;
 
     [Authorize]
     [Route("[controller]/[action]")]
@@ -64,7 +63,16 @@ namespace HealthR.Web.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return RedirectToLocal(returnUrl);
+
+                    if (User.IsInRole(WebConstants.AdministratorRole)) {
+                        return RedirectToAction(nameof(UsersController.Index), "users", new { area = "admin" });
+                    }
+                    // if (User.IsInRole(WebConstants.DoctorRole))
+                    // {
+                    //     return RedirectToAction(nameof(HomeController.Index), "User", new { area = "Admin" });
+                    // }asp-area="" asp-controller="Users" asp-action="Profile" asp-route-username="@userName"
+                  //  var user = _userManager.GetUserName(User);
+                    return RedirectToAction(nameof(UsersController.Profile), "users", new { username = model.Username, area=string.Empty });
                 }
                 if (result.RequiresTwoFactor)
                 {

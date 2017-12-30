@@ -17,8 +17,10 @@ namespace HealthR.Services.Data.Contracts
 
         Task<IEnumerable<AppointmentServiceModel>> GetAllByUser(string userId);
         Task Edit(int id, string title, string Description, DateTime startTime);
-        Task<bool> AlreadyScheduled(DateTime startDate);
+        Task<bool> AlreadyScheduled(DateTime startDate, string userId);
         Task DeleteById(int id);
         Task<bool> IsExistById(int id);
+        Task<bool> CheckUserForSchedule(string userId);
+        Task <IEnumerable<AppointmentServiceModel>> GetTodayAppointment(string userId);
     }
 }

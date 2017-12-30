@@ -3,8 +3,6 @@
     ViewBag.Title = "Index";
     var currentDateTime = Model.Week.FirstDayOfWeek;
     var zeroTimeDate = new DateTime(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day, 0, 0, 0);
-
-    //  var firstWeekDate = zeroTimeDate.AddDays(-Convert.ToInt32(zeroTimeDate.DayOfWeek)>0 ? +1 : 0);
     var firstWeekDate = zeroTimeDate;
     var lastWeekDate = firstWeekDate.AddDays(5);
     var tmpAppId = 0;
@@ -18,7 +16,7 @@
 
 }
 
-@Model.Week.WeekNumber
+
 <div id="notificationBox">
 
 </div>
@@ -34,7 +32,7 @@
 
                 <div class="form-group">
 
-                    <input type="hidden" placeholder="Enter week..." asp-for="Week.WeekNumber" value="@(Model.Week.WeekNumber-1)" class="form-control" />
+                    <input type="hidden" placeholder="Enter week..." asp-for="Week.WeekNumber" value="@(Model.Week.WeekNumber - 1)" class="form-control" />
 
                 </div>
 
@@ -68,7 +66,7 @@
 
                 <div class="form-group">
                     <label hidden asp-for="Week.WeekNumber"></label>
-                    <input type="hidden" asp-for="Week.WeekNumber" value="@(Model.Week.WeekNumber+1)" class="form-control" />
+                    <input type="hidden" asp-for="Week.WeekNumber" value="@(Model.Week.WeekNumber + 1)" class="form-control" />
 
                 </div>
 
@@ -80,20 +78,28 @@
         </div>
     </div>
 
-    <table class="table table-hover table-bordered table-condensed ">
+    <table class="table table-hover table-bordered schedule table-condensed ">
         <thead>
             <tr>
                 <th class="text-center">Hours</th>
                 <th class="text-center"><p>@firstWeekDate.DayOfWeek</p>@firstWeekDate.ToShortDateString()</th>
-                <th class="text-center"><p>@firstWeekDate.AddDays(1).DayOfWeek </p>@firstWeekDate.AddDays(1).ToShortDateString()</th>
-                <th class="text-center"><p>@firstWeekDate.AddDays(2).DayOfWeek </p>@firstWeekDate.AddDays(2).ToShortDateString()</th>
-                <th class="text-center"><p>@firstWeekDate.AddDays(3).DayOfWeek </p>@firstWeekDate.AddDays(3).ToShortDateString()</th>
-                <th class="text-center"><p>@firstWeekDate.AddDays(4).DayOfWeek </p>@firstWeekDate.AddDays(4).ToShortDateString()</th>
-                <th class="text-center"><p>@firstWeekDate.AddDays(5).DayOfWeek </p>@firstWeekDate.AddDays(5).ToShortDateString()</th>
-                <th class="text-center"><p>@firstWeekDate.AddDays(6).DayOfWeek </p>@firstWeekDate.AddDays(6).ToShortDateString()</th>
+                @{
+                    for (int i = 1; i <= 6; i++)
+                    {
+                        if (firstWeekDate.AddDays(i).Date == DateTime.Now.Date)
+                        {
+                            <th class="text-center" style="background-color:#ff6262"><p>@firstWeekDate.AddDays(i).DayOfWeek </p>@firstWeekDate.AddDays(i).ToShortDateString()</th>
+                         }
+                        else
+                        {
+                            <th class="text-center"><p>@firstWeekDate.AddDays(i).DayOfWeek </p>@firstWeekDate.AddDays(i).ToShortDateString()</th>
+                        }
+                    }
+                }
+
             </tr>
         </thead>
-        <tbody class="text-center">
+        <tbody class="text-center schedule">
             @{
                 for (int i = 8; i < 17; i++)
                 {
@@ -117,15 +123,18 @@
 
                                 if (appointment != null)
                                 {
-                                    <td class="success" data-editorsave="edit" data-toggle="modal" data-target="#modal"data-time="@Convert.ToDateTime(currentDateAndTime).TimeOfDay" data-day="@currentDateAndTime.Year-@currentDateAndTime.Month-@currentDateAndTime.Day" data-id="@appointment.Id" data-title="@appointment.Title" data-description="@appointment.Description" data-date="@currentDateAndTime" data-appointmentid="">
-                                       <span class="glyphicon glyphicon-bookmark" style="color:#ff6262;top:0;float:left"></span> <span>@appointment.Title </span>
+                                    <td class="success" data-editorsave="edit" data-toggle="modal" data-target="#modal" data-time="@Convert.ToDateTime(currentDateAndTime).TimeOfDay" data-day="@currentDateAndTime.Year-@currentDateAndTime.Month-@currentDateAndTime.Day" data-id="@appointment.Id" data-title="@appointment.Title" data-description="@appointment.Description" data-date="@currentDateAndTime" data-appointmentid="">
+                                        <span class="glyphicon glyphicon-bookmark" style="color:#ff6262;top:0;float:left"></span> <span>@appointment.Title </span>
 
                                     </td>
                                 }
 
                                 else
                                 {
-                                    @:<td data-toggle="modal" data-editorsave="save"  data-target="#modal" data-title="" data-description="" data-date="@currentDateAndTime" data-appointmentid=""></td>
+                                    @:
+                                    <td data-toggle="modal" data-editorsave="save" data-target="#modal" data-title="" data-description="" data-date="@currentDateAndTime" data-appointmentid=""></td>
+
+
 
 
                                 }
@@ -161,7 +170,7 @@
                         <input type="hidden" asp-for="EditAppointment.Id" />
 
                     </div>
-                   
+
 
                     <div class="form-group">
 
@@ -202,7 +211,7 @@
                             <input type="submit" value="Save" class="btn btn-primary" />
                         </div>
                         <div class="col-md-4 toEdit">
-                            <a id ="deleteme" asp-controller="schedule" asp-action="DeleteAppointment"  class=" btn btn-danger ">Delete</a>
+                            <a id="deleteme" asp-controller="schedule" asp-action="DeleteAppointment" class=" btn btn-danger ">Delete</a>
                         </div>
                     </div>
                 </form>
@@ -220,7 +229,7 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-<script>
+    <script>
 
         var results = $("#Results");
         var onBegin = function () {
@@ -244,12 +253,9 @@
 
           //  $('#notificationBox').html('<div class="alert alert-danger fade in"><strong>Faild!</strong> Appointment wa not added to the schedule! </div>').fadeIn(800).delay(2000).slideUp(800);
         };
-        var ai = "13.12.2017 г. 11:00:00"
+       
 
-        var a = $('td[data-date*="' + ai + '"]')
-        a.css('background-color', '#EE178C')
 
-            
         $(document).ready(function () {
 
             if (@tmpAppId != 0) {
@@ -282,7 +288,7 @@
             var $form = modal.find("form")
 
             if (editOrSave == 'edit') {
-        
+
                 modal.find("#ModalLabel").html('Edint or delete Appointment!')
                 modal.find("form").find('input[type="submit"]').val('Change')
                 modal.find("form").find('.toEdit').attr('hidden', false)
@@ -327,6 +333,6 @@
 
 
         })
-</script>
+    </script>
 
 }

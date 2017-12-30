@@ -22,6 +22,10 @@ namespace HealthR.Services.Data
             this.db = db;
         }
 
+        public async Task<bool> CheckUserForSchedule(string userId)
+         => await this.db.Users.AnyAsync(u => u.Id == userId && u.ScheduleId != null);
+
+
         public async Task<bool> AddAppointment(string title, string description, DateTime startTime, string userId)
         {
             var appointment = new Appointment
@@ -33,6 +37,7 @@ namespace HealthR.Services.Data
 
             this.db.Add(appointment);
             int scheduleId = GetScheduleId(userId);
+            
 
             var scheduleAppointment = new ScheduleAppointment
             {
@@ -47,8 +52,37 @@ namespace HealthR.Services.Data
             return true;
         }
 
-        public Task<bool> AlreadyScheduled(DateTime startDate)
-            => this.db.Appointments.AnyAsync(ap => ap.StartTime == startDate && !ap.IsDeleted);
+        public async Task<IEnumerable<AppointmentServiceModel>> GetTodayAppointment(string userId)
+        {
+            var scheduleId = GetScheduleId(userId);
+
+            var appointments = await this.db
+                .Appointments
+                .Where(a => a.Schedules.Any(s => s.ScheduleId == scheduleId) && !a.IsDeleted && a.StartTime.Date == DateTime.Now.Date )
+                .OrderBy(ap=>ap.StartTime)
+                .ProjectTo<AppointmentServiceModel>()
+                .ToListAsync();
+
+            return appointments;
+
+        }
+
+        public async Task<bool> AlreadyScheduled(DateTime startDate, string userId)
+        {
+
+            var scheduleId =  GetScheduleId(userId);
+
+            var appointment = await this.db.Schedules.Where(s => s.Id == scheduleId && s.Appointments.Any(ap => ap.Appointment.StartTime == startDate && !ap.
+             Appointment.IsDeleted)).FirstOrDefaultAsync();
+
+            if (appointment!= null)
+            {
+                return true;
+
+            }
+            return false;
+            //this.db.Appointments.AnyAsync(ap => ap.StartTime == startDate && !ap.IsDeleted && ap.Schedules.Any(s=>s.ScheduleId == scheduleId));
+        }
 
         public async Task DeleteById(int id)
         {
@@ -91,5 +125,7 @@ namespace HealthR.Services.Data
 
         private int GetScheduleId(string userId)
             => (int)this.db.Users.Where(a => a.Id == userId).Select(u => u.ScheduleId).FirstOrDefault();
+
+        
     }
 }

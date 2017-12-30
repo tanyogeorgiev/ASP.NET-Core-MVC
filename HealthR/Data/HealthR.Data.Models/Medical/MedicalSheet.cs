@@ -7,11 +7,11 @@
         public int Id { get; set; }
 
         [Required]
-        public Patient Patient { get; set; }
+        public User Patient { get; set; }
 
         public string PatientId { get; set; }
 
-        public Doctor Doctor { get; set; }
+        public User Doctor { get; set; }
 
         public string DoctorId { get; set; }
         

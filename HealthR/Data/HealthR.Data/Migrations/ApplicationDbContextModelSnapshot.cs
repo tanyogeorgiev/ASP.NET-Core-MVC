@@ -22,6 +22,19 @@ namespace HealthR.Data.Migrations
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("HealthR.Data.Models.Medical.DoctorPatients", b =>
+                {
+                    b.Property<string>("DoctorId");
+
+                    b.Property<string>("PatientId");
+
+                    b.HasKey("DoctorId", "PatientId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("DoctorPatients");
+                });
+
             modelBuilder.Entity("HealthR.Data.Models.Medical.MedicalSheet", b =>
                 {
                     b.Property<int>("Id")
@@ -162,6 +175,8 @@ namespace HealthR.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50);
@@ -171,8 +186,7 @@ namespace HealthR.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId")
-                        .IsUnique();
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Schedules");
                 });
@@ -217,8 +231,7 @@ namespace HealthR.Data.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
+                    b.Property<string>("DoctorId");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256);
@@ -256,6 +269,8 @@ namespace HealthR.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DoctorId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -265,8 +280,6 @@ namespace HealthR.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -398,37 +411,27 @@ namespace HealthR.Data.Migrations
                     b.HasDiscriminator().HasValue("RecurrenceAppointment");
                 });
 
-            modelBuilder.Entity("HealthR.Data.Models.Medical.Doctor", b =>
+            modelBuilder.Entity("HealthR.Data.Models.Medical.DoctorPatients", b =>
                 {
-                    b.HasBaseType("HealthR.Data.Models.User");
+                    b.HasOne("HealthR.Data.Models.User", "Doctor")
+                        .WithMany("Patients")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-
-                    b.ToTable("Doctor");
-
-                    b.HasDiscriminator().HasValue("Doctor");
-                });
-
-            modelBuilder.Entity("HealthR.Data.Models.Medical.Patient", b =>
-                {
-                    b.HasBaseType("HealthR.Data.Models.User");
-
-                    b.Property<string>("DoctorId");
-
-                    b.HasIndex("DoctorId");
-
-                    b.ToTable("Patient");
-
-                    b.HasDiscriminator().HasValue("Patient");
+                    b.HasOne("HealthR.Data.Models.User", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("HealthR.Data.Models.Medical.MedicalSheet", b =>
                 {
-                    b.HasOne("HealthR.Data.Models.Medical.Doctor", "Doctor")
+                    b.HasOne("HealthR.Data.Models.User", "Doctor")
                         .WithMany("PatientMedicalSheets")
                         .HasForeignKey("DoctorId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("HealthR.Data.Models.Medical.Patient", "Patient")
+                    b.HasOne("HealthR.Data.Models.User", "Patient")
                         .WithMany("MedicalSheets")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -441,12 +444,12 @@ namespace HealthR.Data.Migrations
 
             modelBuilder.Entity("HealthR.Data.Models.Medical.Prescription", b =>
                 {
-                    b.HasOne("HealthR.Data.Models.Medical.Doctor", "Doctor")
+                    b.HasOne("HealthR.Data.Models.User", "Doctor")
                         .WithMany("PatientPrescriptions")
                         .HasForeignKey("DoctorId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("HealthR.Data.Models.Medical.Patient", "Patient")
+                    b.HasOne("HealthR.Data.Models.User", "Patient")
                         .WithMany("Prescriptions")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -481,8 +484,8 @@ namespace HealthR.Data.Migrations
             modelBuilder.Entity("HealthR.Data.Models.Scheduler.Schedule", b =>
                 {
                     b.HasOne("HealthR.Data.Models.User", "Owner")
-                        .WithOne("Schedule")
-                        .HasForeignKey("HealthR.Data.Models.Scheduler.Schedule", "OwnerId")
+                        .WithMany("Schedules")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -510,6 +513,13 @@ namespace HealthR.Data.Migrations
                         .WithMany("AppointmentRequests")
                         .HasForeignKey("RequestedScheduleId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("HealthR.Data.Models.User", b =>
+                {
+                    b.HasOne("HealthR.Data.Models.User", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -555,14 +565,6 @@ namespace HealthR.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("HealthR.Data.Models.Medical.Patient", b =>
-                {
-                    b.HasOne("HealthR.Data.Models.Medical.Doctor", "Doctor")
-                        .WithMany("Patients")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

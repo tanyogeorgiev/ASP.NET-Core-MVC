@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -17,7 +19,8 @@
     </environment>
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+
+    <nav class="navbar navbar-inverse navbar-fixed-top  ">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -26,34 +29,52 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">HealthR.Web</a>
-            </div>
+                @{var userName = UserManager.GetUserName(User); }
+        
+                <a asp-area="" asp-controller="Users" asp-action="Profile" asp-route-username="@userName" class="navbar-left"> <img height="45em" src="/images/HealthR_LogoR.svg" /> <div class="navbar-brand">User HUB</div></a>
+           </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li> <a asp-area="" asp-controller="Users" asp-action="Profile" asp-route-username="@userName"> DASHBOARD</a></li>
+                    @if (User.IsInRole(WebConstants.AdministratorRole))
+                    {
+
+                <li><a asp-area="Admin" asp-controller="Users" asp-action="Index">Manage Users</a></li>
+
+
+                    }
+                    @if (User.IsInRole(WebConstants.DoctorRole))
+                    {
+
+                <li><a asp-area="Doctor" asp-controller="Patients" asp-action="Index">Manage Patients</a></li>
+
+
+                    }
+
+                    <li><a asp-area="" asp-controller="Schedule" asp-action="ByWeek">Schedule</a></li>
+
+
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
     </nav>
     <div class="container body-content">
-      
+
         @if (TempData.ContainsKey(WebConstants.TempDataSuccessMessageKey))
         {
-            <div class="alert alert-success flyover flyover-bottom ">
-                <h1> @TempData[WebConstants.TempDataSuccessMessageKey]</h1>
+        <div class="alert alert-success flyover flyover-bottom ">
+            <h1> @TempData[WebConstants.TempDataSuccessMessageKey]</h1>
 
-            </div>
+        </div>
         }
 
         @if (TempData.ContainsKey(WebConstants.TempDataErrorMessageKey))
         {
-            <div id="alertdanger" class="alert alert-danger flyover flyover-bottom ">
-                <h1> @TempData[WebConstants.TempDataErrorMessageKey]</h1>
+        <div id="alertdanger" class="alert alert-danger flyover flyover-bottom ">
+            <h1> @TempData[WebConstants.TempDataErrorMessageKey]</h1>
 
-            </div>
+        </div>
         }
 
         @RenderBody()
@@ -101,5 +122,5 @@
 
 @section Scripts {
 
-    
-    }
+
+}

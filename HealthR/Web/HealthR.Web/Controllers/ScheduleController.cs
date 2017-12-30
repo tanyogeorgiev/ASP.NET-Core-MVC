@@ -31,6 +31,14 @@ namespace HealthR.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ByWeek(UserScheduleViewModel model)
         {
+            var userId = this.userManager.GetUserId(User);
+
+            var scheduleUser = await this.appointments.CheckUserForSchedule(userId);
+
+            if (!scheduleUser)
+            {
+                RedirectToAction(nameof(UsersController.CreateSchedule), "Users", new { area = string.Empty });
+            }
 
             var week = model.Week.WeekNumber;
             if (week == 0)
@@ -44,6 +52,20 @@ namespace HealthR.Web.Controllers
             return View(userSchedule);
         }
 
+        [HttpGet]
+        public async Task<JsonResult> Today ()
+        {
+            var userId = this.userManager.GetUserId(User);
+
+            var scheduleUser = await this.appointments.CheckUserForSchedule(userId);
+            if (!scheduleUser)
+            {
+                RedirectToAction(nameof(UsersController.CreateSchedule), "Users", new { area = string.Empty });
+            }
+            var appointments = await this.appointments.GetTodayAppointment(userId);
+
+            return Json(appointments);
+        }
        
 
         [HttpPost]
@@ -54,7 +76,7 @@ namespace HealthR.Web.Controllers
                 || String.IsNullOrEmpty(model.EditAppointment.Description)
                 || String.IsNullOrEmpty(model.EditAppointment.StartTime))
             {
-                this.TempData.AddErrorMessage($"Appointment was NOT created successfully");
+                this.TempData.AddErrorMessage(WebConstants.AppointmentCreateFailMessage);
 
                 return RedirectToAction(nameof(ByWeek));
             }
@@ -67,7 +89,7 @@ namespace HealthR.Web.Controllers
                 Convert.ToDateTime(model.EditAppointment.StartTime),
                 userId);
 
-            this.TempData.AddSuccessMessage($"Appointment was created successfully");
+            this.TempData.AddSuccessMessage(WebConstants.AppointmentCreateSuccessMessage);
 
 
             return RedirectToAction(nameof(ByWeek));
@@ -89,15 +111,16 @@ namespace HealthR.Web.Controllers
             var currentStartDateTime = Convert.ToDateTime(model.EditAppointment.StartTime);
 
             if (newDateTime != currentStartDateTime)
-            { 
-            var validationChecks = await this.appointments.AlreadyScheduled(newDateTime);
+            {
+                string userId = this.userManager.GetUserId(User);
+                var validationChecks = await this.appointments.AlreadyScheduled(newDateTime, userId);
 
          
 
 
             if (validationChecks)
             {
-                this.TempData.AddErrorMessage($"Already has appointment for this date and time!");
+                this.TempData.AddErrorMessage(WebConstants.AppointmentDateTimeReservedMessage);
                     TempData["appointmentId"] = model.EditAppointment.Id;
                 return RedirectToAction(nameof(ByWeek));
             }
@@ -113,7 +136,7 @@ namespace HealthR.Web.Controllers
 
 
 
-            this.TempData.AddSuccessMessage($"Appointment was edited successfully");
+            this.TempData.AddSuccessMessage(WebConstants.AppointmentEditSuccessMessage);
 
             var week = GetWeek(Convert.ToDateTime(model.EditAppointment.StartTime));
             var userSchedule = await PrepareResult(week);
@@ -128,14 +151,14 @@ namespace HealthR.Web.Controllers
             if (String.IsNullOrEmpty(id)
                 || String.IsNullOrEmpty(week) )
             {
-                this.TempData.AddErrorMessage($"APPOINTMENT WAS NOT DELETED!");
+                this.TempData.AddErrorMessage(WebConstants.AppointmentNotDeletedMessage);
                
             }
 
             var exist = await this.appointments.IsExistById(int.Parse(id));
              if (!exist)
             {
-                this.TempData.AddErrorMessage($"APPOINTMENT WAS NOT DELETED!");
+                this.TempData.AddErrorMessage(WebConstants.AppointmentNotDeletedMessage);
 
             }
 
@@ -145,7 +168,7 @@ namespace HealthR.Web.Controllers
             }
 
 
-            this.TempData.AddSuccessMessage($"Appointment was deleted successfully");
+            this.TempData.AddSuccessMessage(WebConstants.AppointmentDeleteSuccessMessage);
 
             var userSchedule = await PrepareResult(int.Parse(week));
             return View(nameof(ByWeek), userSchedule);

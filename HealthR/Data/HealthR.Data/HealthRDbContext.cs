@@ -8,7 +8,7 @@ namespace HealthR.Data
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-    
+
 
     public class HealthRDbContext : IdentityDbContext<User>
     {
@@ -16,9 +16,8 @@ namespace HealthR.Data
             : base(options)
         {
         }
-
-        public DbSet<Doctor> Doctors { get; set; }
-        public DbSet<Patient> Patients { get; set; }
+        
+        public DbSet<DoctorPatients> DoctorPatients {get; set;}
         public DbSet<MedicalSheet> MedicalSheets { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<Medicament> Medicaments { get; set; }
@@ -104,12 +103,16 @@ namespace HealthR.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
-                .Entity<Patient>()
-                .HasOne(p => p.Doctor)
-                .WithMany(d => d.Patients)
+                .Entity<DoctorPatients>()
+                .HasKey(k => new { k.DoctorId, k.PatientId });
+                
+
+            builder
+                .Entity<User>()
+                .HasMany(d => d.Patients)
+                .WithOne(p => p.Doctor)
                 .HasForeignKey(fk => fk.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
-
           
 
             builder
@@ -150,9 +153,9 @@ namespace HealthR.Data
 
             builder
                 .Entity<User>()
-                .HasOne(u => u.Schedule)
+                .HasMany(u => u.Schedules)
                 .WithOne(s => s.Owner)
-                .HasForeignKey<Schedule>(b=>b.OwnerId)
+                .HasForeignKey(s=>s.OwnerId)
                 ;
 
             base.OnModelCreating(builder);

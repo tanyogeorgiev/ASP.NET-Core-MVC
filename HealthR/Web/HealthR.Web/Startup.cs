@@ -52,6 +52,8 @@ namespace HealthR.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseDatabaseMigration();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -70,8 +72,24 @@ namespace HealthR.Web
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+
+                    name: "profile",
+                    template: "users/{username}",
+                    defaults: new { controller = "Users", action = "Profile" });
+
+
+
+                routes.MapRoute(
+                    name: "areas",
+                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+
+
+
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
             });
         }
     }

@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Data\HealthR.Data\HealthR.Data.csproj" />
+    <ProjectReference Include="..\..\HealthR.Common\HealthR.Common.csproj" />
   </ItemGroup>
 
 </Project>
