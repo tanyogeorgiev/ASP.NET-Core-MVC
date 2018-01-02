@@ -26,18 +26,31 @@ namespace HealthR.Services.Data
          => await this.db.Users.AnyAsync(u => u.Id == userId && u.ScheduleId != null);
 
 
-        public async Task<bool> AddAppointment(string title, string description, DateTime startTime, string userId)
+        public async Task<bool> AddAppointment(string title, string description, DateTime startTime, string userId, string patientId)
         {
             var appointment = new Appointment
             {
                 Title = title,
                 Description = description,
-                StartTime = startTime
+                StartTime = startTime,
+                PatientId = patientId,
+                CreatorId = userId
             };
 
             this.db.Add(appointment);
             int scheduleId = GetScheduleId(userId);
-            
+
+            if (patientId != null)
+            {
+                int patientScheduleId = GetScheduleId(patientId);
+                var patientScheduleAppointment = new ScheduleAppointment
+                {
+                    ScheduleId = patientScheduleId,
+                    AppointmentId = appointment.Id
+                };
+
+                this.db.Add(patientScheduleAppointment);
+            }
 
             var scheduleAppointment = new ScheduleAppointment
             {
@@ -58,8 +71,8 @@ namespace HealthR.Services.Data
 
             var appointments = await this.db
                 .Appointments
-                .Where(a => a.Schedules.Any(s => s.ScheduleId == scheduleId) && !a.IsDeleted && a.StartTime.Date == DateTime.Now.Date )
-                .OrderBy(ap=>ap.StartTime)
+                .Where(a => a.Schedules.Any(s => s.ScheduleId == scheduleId) && !a.IsDeleted && a.StartTime.Date == DateTime.Now.Date)
+                .OrderBy(ap => ap.StartTime)
                 .ProjectTo<AppointmentServiceModel>()
                 .ToListAsync();
 
@@ -70,12 +83,12 @@ namespace HealthR.Services.Data
         public async Task<bool> AlreadyScheduled(DateTime startDate, string userId)
         {
 
-            var scheduleId =  GetScheduleId(userId);
+            var scheduleId = GetScheduleId(userId);
 
             var appointment = await this.db.Schedules.Where(s => s.Id == scheduleId && s.Appointments.Any(ap => ap.Appointment.StartTime == startDate && !ap.
              Appointment.IsDeleted)).FirstOrDefaultAsync();
 
-            if (appointment!= null)
+            if (appointment != null)
             {
                 return true;
 
@@ -89,22 +102,36 @@ namespace HealthR.Services.Data
             var appointment = this.db.Appointments.Find(id);
 
             appointment.IsDeleted = true;
-    
+
 
             await this.db.SaveChangesAsync();
         }
 
-        public async Task Edit(int id, string title,string Description, DateTime startTime)
+        public async Task Edit(int id, string title, string Description, DateTime startTime, string patientId)
         {
             var appointment = this.db.Appointments.Find(id);
+
 
             appointment.Title = title;
             appointment.Description = Description;
             appointment.StartTime = startTime;
+            appointment.PatientId = patientId;
+
+            if (patientId != null)
+            {
+                int patientScheduleId = GetScheduleId(patientId);
+                var patientScheduleAppointment = new ScheduleAppointment
+                {
+                    ScheduleId = patientScheduleId,
+                    AppointmentId = appointment.Id
+                };
+
+                this.db.Add(patientScheduleAppointment);
+            }
 
             await this.db.SaveChangesAsync();
 
-            
+
         }
 
         public async Task<IEnumerable<AppointmentServiceModel>> GetAllByUser(string userId)
@@ -121,11 +148,11 @@ namespace HealthR.Services.Data
         }
 
         public async Task<bool> IsExistById(int id)
-            =>   this.db.Appointments.Any(ap => ap.Id == id);
+            => this.db.Appointments.Any(ap => ap.Id == id);
 
         private int GetScheduleId(string userId)
             => (int)this.db.Users.Where(a => a.Id == userId).Select(u => u.ScheduleId).FirstOrDefault();
 
-        
+
     }
 }

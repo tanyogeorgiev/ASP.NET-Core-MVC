@@ -20,6 +20,7 @@ namespace HealthR.Services.Data
             this.db = db;
 
         }
+        
 
         public async Task CreateSchedule(string userId, string name)
         {
@@ -29,10 +30,10 @@ namespace HealthR.Services.Data
                 OwnerId = userId
             };
 
-            var oldschedule = this.db.Schedules.Where(s => s.OwnerId == userId && !s.IsDeleted).FirstOrDefault();
+            var oldschedule = this.db.Schedules.Where(s => s.OwnerId == userId && s.IsActive).FirstOrDefault();
             if (oldschedule != null)
             {
-                oldschedule.IsDeleted = true;
+                oldschedule.IsActive = false;
             }
 
             this.db.Schedules.Add(schedule);
@@ -47,6 +48,24 @@ namespace HealthR.Services.Data
 
         }
 
+        public async Task<bool> ChangeSchedule(string currentUser, int id)
+        {
+
+            var oldschedule = this.db.Schedules.Where(s => s.OwnerId == currentUser && s.IsActive).FirstOrDefault();
+            if (oldschedule != null)
+            {
+                oldschedule.IsActive = false;
+            }
+
+            var newSchedule = this.db.Schedules.Where(s => s.OwnerId == currentUser && s.Id==id).FirstOrDefault();
+            newSchedule.IsActive = true;
+            var user = this.db.Users.Find(currentUser);
+            user.ScheduleId = id;
+
+            await this.db.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<UserProfileServiceModel> ProfileAsync(string id)
          => await this.db
              .Users
@@ -54,6 +73,6 @@ namespace HealthR.Services.Data
              .ProjectTo<UserProfileServiceModel>()
              .FirstOrDefaultAsync();
 
-
+        
     }
 }

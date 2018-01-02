@@ -19,10 +19,12 @@ namespace HealthR.Web.ViewModels.Schedule
         [Required]
         public string StartTime { get; set; }
 
+        public string PatientName { get; set; }
 
+        public string PatientId { get; set; }
 
-
-
+        public string CreatorId { get; set; }
+        
 
     }
 }

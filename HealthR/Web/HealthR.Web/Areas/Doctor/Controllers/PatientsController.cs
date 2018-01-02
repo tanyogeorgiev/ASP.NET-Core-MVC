@@ -66,12 +66,26 @@ namespace HealthR.Web.Areas.Doctor.Controllers
             return Json(patients);
         }
 
+        [HttpPost]
+        public async Task<JsonResult> AutoCompletePatients([FromBody] DoctorAutocompletePrefixViewModel model)
+        {
+
+            var doctorId = this.userManager.GetUserId(User);
+
+
+            var patients = await this.patients
+                .FindByPrefixForSchedule(model.Prefix, doctorId);
+
+            return Json(patients);
+        }
+
         public async Task<JsonResult> GetPatientDetails(string id)
         {
             var patient = await this.patients.GetPatientDetails(id);
             return Json(patient);
         }
 
+        
 
         public async Task<IActionResult> DeletePatient(string id)
         {

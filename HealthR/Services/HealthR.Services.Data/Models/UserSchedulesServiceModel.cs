@@ -7,9 +7,11 @@ namespace HealthR.Services.Data.Models
 
     public class UserSchedulesServiceModel: IMapFrom<Schedule>, IHaveCustomMapping
     {
+        public int Id { get; set; }
+
         public string Name { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; }
 
         public int AppointmentsCount { get; set; }
 

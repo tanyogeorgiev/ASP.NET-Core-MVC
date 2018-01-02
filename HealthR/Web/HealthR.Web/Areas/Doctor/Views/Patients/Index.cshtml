@@ -95,7 +95,7 @@ else
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" onclick="clearProfileBox()" data-dismiss="modal">Cancel</button>
 
             </div>
         </div>
@@ -114,7 +114,7 @@ else
                 <div class="row">
 
 
-                    <div id="profileBox" class="col-sm-6 col-md-6 ">
+                    <div id="profilePatientBox" class="col-sm-6 col-md-6 ">
                         <div class="thumbnail hiddenDiv">
                             <img id="patientDetailsProfileThumbnail" src="..." alt="">
                             <div class="caption">
@@ -160,7 +160,14 @@ else
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
-        $("div.thumbnail").toggleClass('hiddenDiv', true)
+        function clearProfileBox() {
+            console.log('dd')
+            $("div.thumbnail").toggleClass('hiddenDiv', true)
+            $("#txtCustomer").val('')
+          
+
+        }
+      
         $(function () {
             $("#txtCustomer").autocomplete({
                 source: function (request, response) {

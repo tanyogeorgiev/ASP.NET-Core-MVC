@@ -1,4 +1,5 @@
 ﻿@model UserScheduleViewModel
+@inject UserManager<User> UserManager
 @{
     ViewBag.Title = "Index";
     var currentDateTime = Model.Week.FirstDayOfWeek;
@@ -16,7 +17,7 @@
 
 }
 
-
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <div id="notificationBox">
 
 </div>
@@ -89,7 +90,7 @@
                         if (firstWeekDate.AddDays(i).Date == DateTime.Now.Date)
                         {
                             <th class="text-center" style="background-color:#ff6262"><p>@firstWeekDate.AddDays(i).DayOfWeek </p>@firstWeekDate.AddDays(i).ToShortDateString()</th>
-                         }
+                        }
                         else
                         {
                             <th class="text-center"><p>@firstWeekDate.AddDays(i).DayOfWeek </p>@firstWeekDate.AddDays(i).ToShortDateString()</th>
@@ -101,6 +102,8 @@
         </thead>
         <tbody class="text-center schedule">
             @{
+                var currentUserId = UserManager.GetUserId(User);
+
                 for (int i = 8; i < 17; i++)
                 {
 
@@ -123,7 +126,20 @@
 
                                 if (appointment != null)
                                 {
-                                    <td class="success" data-editorsave="edit" data-toggle="modal" data-target="#modal" data-time="@Convert.ToDateTime(currentDateAndTime).TimeOfDay" data-day="@currentDateAndTime.Year-@currentDateAndTime.Month-@currentDateAndTime.Day" data-id="@appointment.Id" data-title="@appointment.Title" data-description="@appointment.Description" data-date="@currentDateAndTime" data-appointmentid="">
+                                    <td class="success"
+                                        data-editorsave="edit"
+                                        data-toggle="modal"
+                                        data-target="#modal"
+                                        data-time="@Convert.ToDateTime(currentDateAndTime).TimeOfDay"
+                                        data-day="@currentDateAndTime.Year-@currentDateAndTime.Month.ToString("D2")-@currentDateAndTime.Day.ToString("D2")"
+                                        data-id="@appointment.Id"
+                                        data-title="@appointment.Title"
+                                        data-description="@appointment.Description"
+                                        data-date="@currentDateAndTime"
+                                        data-appointmentid=""
+                                        data-patientId="@appointment.PatientId"
+                                        data-patientName="@appointment.PatientName"
+                                        data-owner="@(appointment.CreatorId==currentUserId ? "true" : "false")">
                                         <span class="glyphicon glyphicon-bookmark" style="color:#ff6262;top:0;float:left"></span> <span>@appointment.Title </span>
 
                                     </td>
@@ -132,14 +148,9 @@
                                 else
                                 {
                                     @:
-                                    <td data-toggle="modal" data-editorsave="save" data-target="#modal" data-title="" data-description="" data-date="@currentDateAndTime" data-appointmentid=""></td>
-
-
-
+                                    <td data-toggle="modal" data-editorsave="save" data-target="#modal" data-title="" data-description="" data-date="@currentDateAndTime" data-owner="true" data-appointmentid=""></td>
 
                                 }
-
-
 
 
                             }
@@ -191,7 +202,14 @@
                         <input readonly asp-for="EditAppointment.StartTime" placeholder="Enter description..." class="form-control" />
                         <span asp-validation-for="EditAppointment.StartTime" class="form-text text-danger"></span>
                     </div>
-
+                    @if (User.IsInRole(WebConstants.DoctorRole))
+                    {
+                        <div class="form-group">
+                            <label for="Name">Patient name:</label>
+                            <input class="form-control" type="text" id="txtCustomer" asp-for="EditAppointment.PatientName" />
+                            <input hidden type="text" id="hfCustomer" asp-for="EditAppointment.PatientId" />
+                        </div>
+                    }
                     <div class="form-group toEdit" hidden>
                         <label asp-for="EditAppointment.NewStartDay"></label>
                         <input asp-for="EditAppointment.NewStartDay" class="form-control" />
@@ -206,14 +224,15 @@
                         <span asp-validation-for="EditAppointment.NewStartTime" class="form-text text-danger"></span>
                     </div>
 
-                    <div class="row justify-content-around">
-                        <div class="col-md-4">
-                            <input type="submit" value="Save" class="btn btn-primary" />
+                   
+                        <div id="buttonsForOwners" class="row justify-content-around">
+                            <div class="col-md-4">
+                                <input type="submit" value="Save" class="btn btn-primary" />
+                            </div>
+                            <div class="col-md-4 toEdit">
+                                <a id="deleteme" asp-controller="schedule" asp-action="DeleteAppointment" class=" btn btn-danger ">Delete</a>
+                            </div>
                         </div>
-                        <div class="col-md-4 toEdit">
-                            <a id="deleteme" asp-controller="schedule" asp-action="DeleteAppointment" class=" btn btn-danger ">Delete</a>
-                        </div>
-                    </div>
                 </form>
 
             </div>
@@ -228,9 +247,45 @@
 
 
 @section Scripts {
-    @await Html.PartialAsync("_ValidationScriptsPartial")
-    <script>
 
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script>
+        $(function () {
+            $("#txtCustomer").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Doctor/Patients/AutoCompletePatients/',
+                        data: "{ 'prefix': '" + request.term + "'}",
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+
+                            response($.map(data, function (item) {
+                                return item;
+
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                select: function (e, i) {
+                    console.log(i)
+                    $("#hfCustomer").val(i.item.id);
+
+                },
+                minLength: 1
+            })
+
+        });
         var results = $("#Results");
         var onBegin = function () {
 
@@ -253,7 +308,7 @@
 
           //  $('#notificationBox').html('<div class="alert alert-danger fade in"><strong>Faild!</strong> Appointment wa not added to the schedule! </div>').fadeIn(800).delay(2000).slideUp(800);
         };
-       
+
 
 
         $(document).ready(function () {
@@ -280,35 +335,48 @@
             var editOrSave = cell.data('editorsave')
             var currentDate = cell.data('day')
             var currentTime = cell.data('time')
+            var patientId = cell.data('patientid')
+            var patientName = cell.data('patientname')
+            var owner = cell.data('owner')
 
 
 
             //  var fulldate = new Date(year,month,day,hour, minutes, 0)
             var modal = $(this)
             var $form = modal.find("form")
+            $("#buttonsForOwners").toggleClass('hiddenDiv', false)
+            modal.find("input").attr("readonly", false)
 
-            if (editOrSave == 'edit') {
+           
+                if (editOrSave == 'edit') {
 
-                modal.find("#ModalLabel").html('Edint or delete Appointment!')
-                modal.find("form").find('input[type="submit"]').val('Change')
-                modal.find("form").find('.toEdit').attr('hidden', false)
+                    modal.find("#ModalLabel").html('Edint or Delete Appointment!')
+                    modal.find("form").find('input[type="submit"]').val('Change')
+                    modal.find("form").find('.toEdit').attr('hidden', false)
 
-                $form.attr("action", "/schedule/EditAppointment")
-                 var href = modal.find("#deleteme").attr("href")
-                console.log(appointmentId)
-                var appendToHref = '?id='+appointmentId+'&week='+@Model.Week.WeekNumber+''
-                href = href + appendToHref
-                modal.find("#deleteme").attr("href", href)
+                    $form.attr("action", "/schedule/EditAppointment")
+                    var href = modal.find("#deleteme").attr("href")
+                    console.log(appointmentId)
+                    var appendToHref = '?id=' + appointmentId + '&week=' +@Model.Week.WeekNumber+''
+                    href = href + appendToHref
+                    modal.find("#deleteme").attr("href", href)
+                    modal.find("input[name='EditAppointment.StartTime']").attr('readonly',true)
 
-            }
+                }
 
-            else if (editOrSave == 'save') {
-                modal.find("#deleteme").attr("href", 'schedule/DeleteAppointment')
-                modal.find("form").find('input[type="submit"]').val('Save')
-                modal.find("form").find('.toEdit').attr('hidden', true)
-                $form.attr("action", "/schedule/NewAppointment")
+                else if (editOrSave == 'save') {
+                    modal.find("#deleteme").attr("href", 'schedule/DeleteAppointment')
+                    modal.find("form").find('input[type="submit"]').val('Save')
+                    modal.find("form").find('.toEdit').attr('hidden', true)
+                    $form.attr("action", "/schedule/NewAppointment")
 
-            }
+                }
+            
+            
+                if (!owner) {
+                    $("#buttonsForOwners").toggleClass('hiddenDiv', true)
+                    modal.find("input").attr("readonly", true)
+                }
 
 
             modal.find('.modal-body input[name="EditAppointment.Id"]').val(appointmentId)
@@ -318,7 +386,10 @@
             modal.find('.modal-body input[name="EditAppointment.Description"]').val(description)
             modal.find('.modal-body input[name="EditAppointment.StartTime"]').val(currentDateTime)
             modal.find('.modal-body input[name="EditAppointment.NewStartTime"]').attr('value', currentTime)
-            modal.find('.modal-body input[name="EditAppointment.NewStartDay"]').val(currentDate)
+            modal.find('.modal-body input[name="EditAppointment.NewStartDay"]').attr('value', currentDate)
+            modal.find('.modal-body input[name="EditAppointment.PatientName"]').val(patientName)
+            modal.find('.modal-body input[name="EditAppointment.PatientId"]').val(patientId)
+
 
 
 

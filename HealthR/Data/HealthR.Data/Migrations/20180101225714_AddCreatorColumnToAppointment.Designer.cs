@@ -13,9 +13,10 @@ using System;
 namespace HealthR.Data.Migrations
 {
     [DbContext(typeof(HealthRDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180101225714_AddCreatorColumnToAppointment")]
+    partial class AddCreatorColumnToAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

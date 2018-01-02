@@ -93,6 +93,27 @@ namespace HealthR.Services.Data.Doctor
             return allUsers;
         }
 
+
+        public async Task<IList<DoctorPatientAutocompleteServiceModel>> FindByPrefixForSchedule(string prefix, string doctorId)
+        {
+            var userPatients = await this.db.Users
+                .Where(u => u.Id == doctorId)
+                .Select(p => new
+                {
+                    Patients = p.Patients.Select(s => s.PatientId).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            var allUsers = await this.db.Users
+            .Where(p => p.Name.Contains(prefix) && userPatients.Patients.Contains(p.Id))
+            .Take(15)
+            .ProjectTo<DoctorPatientAutocompleteServiceModel>()
+            .ToListAsync();
+
+
+            return allUsers;
+        }
+
         public async Task<bool> DeletePatient(string doctorId, string patientId)
         {
             var doctor = this.db.Users.Find(doctorId);
@@ -105,6 +126,7 @@ namespace HealthR.Services.Data.Doctor
                 return false;
             }
             this.db.Remove<DoctorPatients>(doctorPatient);
+            patient.DoctorId = null;
             await this.db.SaveChangesAsync();
             return true;
 
@@ -121,5 +143,6 @@ namespace HealthR.Services.Data.Doctor
         {
             throw new System.NotImplementedException();
         }
+
     }
 }

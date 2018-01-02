@@ -13,9 +13,10 @@ using System;
 namespace HealthR.Data.Migrations
 {
     [DbContext(typeof(HealthRDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180101201711_ScheduleColumnNameIsDeleteChengeToIsActive")]
+    partial class ScheduleColumnNameIsDeleteChengeToIsActive
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,8 +120,6 @@ namespace HealthR.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("CreatorId");
-
                     b.Property<string>("Description")
                         .IsRequired();
 
@@ -131,8 +130,6 @@ namespace HealthR.Data.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("PatientId");
-
                     b.Property<DateTime>("StartTime");
 
                     b.Property<string>("Title")
@@ -140,10 +137,6 @@ namespace HealthR.Data.Migrations
                         .HasMaxLength(35);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
-
-                    b.HasIndex("PatientId");
 
                     b.ToTable("Appointments");
 
@@ -474,17 +467,6 @@ namespace HealthR.Data.Migrations
                         .WithMany("Medicaments")
                         .HasForeignKey("PrescriptionId")
                         .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("HealthR.Data.Models.Scheduler.Appointment", b =>
-                {
-                    b.HasOne("HealthR.Data.Models.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId");
-
-                    b.HasOne("HealthR.Data.Models.User", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId");
                 });
 
             modelBuilder.Entity("HealthR.Data.Models.Scheduler.AppointmentLabel", b =>

@@ -14,11 +14,15 @@ namespace HealthR.Services.Data.Doctor.Contracts
 
         Task<IEnumerable<DoctorPatientServiceModel>> GetAllPatients(string doctorId);
 
-
+        
         Task<IList<DoctorPatientAutocompleteServiceModel>> FindByPrefix(string prefix, string doctorId);
+
+
+        Task<IList<DoctorPatientAutocompleteServiceModel>> FindByPrefixForSchedule(string prefix, string doctorId);
 
         Task<DoctorPatientDetailsServiceModel> GetPatientDetails(string patientId);
 
         Task<bool> DeletePatient(string doctorId,string patientId);
+
     }
 }

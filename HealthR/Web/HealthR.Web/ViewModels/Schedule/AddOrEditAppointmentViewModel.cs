@@ -10,11 +10,11 @@ namespace HealthR.Web.ViewModels.Schedule
     {
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
-        [Display(Name ="Change appointment date to:")]
+        [Display(Name = "Change appointment date to:(MM/dd/yyyy)")]
         public DateTime NewStartDay { get; set; }
 
         [DataType(DataType.Time)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:H:mm}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
         [Display(Name = "Change appointment time to:")]
         public DateTime NewStartTime { get; set; }
     }

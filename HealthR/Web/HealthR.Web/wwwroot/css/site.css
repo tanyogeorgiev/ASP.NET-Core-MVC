@@ -227,6 +227,7 @@ td.schedule:hover {
 
     .ui-autocomplete.ui-front {
         z-index: 2147483647 !important;
+      
     }
 
 
@@ -238,3 +239,4 @@ div .hiddenDiv {
 .floatright{
     float:right
 }
+

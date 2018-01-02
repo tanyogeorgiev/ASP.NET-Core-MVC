@@ -72,6 +72,7 @@ namespace HealthR.Web.Controllers
         public async Task<IActionResult> NewAppointment(UserScheduleViewModel model)
         {
 
+
             if (String.IsNullOrEmpty(model.EditAppointment.Title)
                 || String.IsNullOrEmpty(model.EditAppointment.Description)
                 || String.IsNullOrEmpty(model.EditAppointment.StartTime))
@@ -81,13 +82,26 @@ namespace HealthR.Web.Controllers
                 return RedirectToAction(nameof(ByWeek));
             }
 
+            var modelPatientId = model.EditAppointment.PatientId;
+
+            string patientId = null;
+            if (!String.IsNullOrEmpty(modelPatientId))
+            {
+               var  patient = await this.userManager.FindByIdAsync(modelPatientId);
+                patientId = patient.Id;
+            }
+           
+
+
             var userId = this.userManager.GetUserId(User);
 
             var result = await this.appointments.AddAppointment(
                 model.EditAppointment.Title,
                 model.EditAppointment.Description,
                 Convert.ToDateTime(model.EditAppointment.StartTime),
-                userId);
+                userId,
+                patientId
+                );
 
             this.TempData.AddSuccessMessage(WebConstants.AppointmentCreateSuccessMessage);
 
@@ -130,7 +144,8 @@ namespace HealthR.Web.Controllers
                 model.EditAppointment.Id,
                 model.EditAppointment.Title,
                 model.EditAppointment.Description,
-                newDateTime);
+                newDateTime,
+                model.EditAppointment.PatientId);
 
             
 
@@ -174,11 +189,11 @@ namespace HealthR.Web.Controllers
             return View(nameof(ByWeek), userSchedule);
         }
 
+       
 
-        
-        //    HELPER METHODS BELOW
+            //    HELPER METHODS BELOW
 
-        private DateTime GetDateByWeek(int week)
+            private DateTime GetDateByWeek(int week)
         {
 
             int weekNumber = week;

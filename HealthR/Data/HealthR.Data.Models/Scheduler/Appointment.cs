@@ -10,6 +10,10 @@ namespace HealthR.Data.Models.Scheduler
     {
         public int Id { get; set; }
 
+        public string CreatorId { get; set; }
+
+        public User Creator { get; set; }
+
         [Required]
         [MaxLength(DataConstants.AppointmentTitleMaxLength)]
         [MinLength(DataConstants.AppointmentTitleMinLength)]
@@ -21,6 +25,10 @@ namespace HealthR.Data.Models.Scheduler
         public DateTime StartTime { get; set; }
 
         public DateTime EndTime { get; set; }
+
+        public string PatientId { get; set; }
+
+        public User Patient { get; set; }
 
         public List<AppointmentLabel> Labels { get; set; } = new List<AppointmentLabel>();
 

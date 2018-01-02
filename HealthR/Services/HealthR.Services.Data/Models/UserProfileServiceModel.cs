@@ -20,6 +20,11 @@ namespace HealthR.Services.Data.Models
 
         public string DoctorName { get; set; }
 
+        public string DoctorEmail { get; set; }
+
+        public string DoctorPhone { get; set; }
+
+
         public IEnumerable<UserSchedulesServiceModel> Schedules { get; set; }
         
         public IEnumerable<UserMedicalSheetsServiceModel> MedicalSheets { get; set; }
@@ -29,6 +34,8 @@ namespace HealthR.Services.Data.Models
             .CreateMap<User, UserProfileServiceModel>()
             .ForMember(u => u.MedicalSheets, cfg => cfg.MapFrom(s => s.MedicalSheets))
             .ForMember(u => u.DoctorName, cfg => cfg.MapFrom(s => s.Doctor.Name))
+            .ForMember(u => u.DoctorEmail, cfg => cfg.MapFrom(s => s.Doctor.Email))
+            .ForMember(u => u.DoctorPhone, cfg => cfg.MapFrom(s => s.Doctor.PhoneNumber))
             .ForMember(u => u.Schedules, cfg => cfg.MapFrom(s => s.Schedules));
     }
 }

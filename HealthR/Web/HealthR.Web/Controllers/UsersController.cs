@@ -22,11 +22,11 @@ namespace HealthR.Web.Controllers
             this.userManager = userManager;
         }
 
-             public IActionResult Index() => View();
-        
+        public IActionResult Index() => View();
+
 
         [Authorize]
-            public async Task<IActionResult> Profile(string username)
+        public async Task<IActionResult> Profile(string username)
         {
 
             var user = await this.userManager.FindByNameAsync(username);
@@ -38,27 +38,44 @@ namespace HealthR.Web.Controllers
 
 
 
-               var profile = await users.ProfileAsync(user.Id);
+            var profile = await users.ProfileAsync(user.Id);
 
-           return  View(profile);
+            return View(profile);
         }
 
         [Authorize]
         [Route("users/CreateSchedule")]
         public IActionResult CreateSchedule() => View();
 
+        [Authorize]
         [HttpPost]
         [Route("users/CreateSchedule")]
-        public async Task <IActionResult> CreateSchedule(CreateUserScheduleViewModel model)
+        public async Task<IActionResult> CreateSchedule(CreateUserScheduleViewModel model)
         {
             var userId = this.userManager.GetUserId(User);
 
-            await this.users.CreateSchedule(userId,model.Name);
+            await this.users.CreateSchedule(userId, model.Name);
 
             this.TempData.AddSuccessMessage(WebConstants.ScheduleCreateSucceess);
 
-            return  RedirectToAction(nameof(ScheduleController.ByWeek), "Schedule", new { area = string.Empty });
-        } 
+            return RedirectToAction(nameof(ScheduleController.ByWeek), "Schedule", new { area = string.Empty });
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> ChangeSchedule(int id)
+        {
+            var currentUser = this.userManager.GetUserId(User);
+
+            var result = await this.users.ChangeSchedule(currentUser, id);
+
+            if (!result)
+            {
+                return BadRequest();
+            }
+
+            var profile = await users.ProfileAsync(currentUser);
+
+            return RedirectToAction(nameof(Profile), profile);
+        }
     }
 }
