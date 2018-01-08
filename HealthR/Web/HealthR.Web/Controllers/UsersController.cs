@@ -73,9 +73,9 @@ namespace HealthR.Web.Controllers
                 return BadRequest();
             }
 
-            var profile = await users.ProfileAsync(currentUser);
+            var currentUserName = User.Identity.Name;
 
-            return RedirectToAction(nameof(Profile), profile);
+            return RedirectToAction(nameof(Profile),"Users", new { username = currentUserName });
         }
     }
 }

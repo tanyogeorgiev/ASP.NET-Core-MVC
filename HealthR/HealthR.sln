@@ -26,6 +26,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthR.Common", "HealthR.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthR.Web", "Web\HealthR.Web\HealthR.Web.csproj", "{F126220E-216D-4E34-B37F-ED0F04CFCAB7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthR.Test", "HealthR.Test\HealthR.Test.csproj", "{D2D3C345-7007-4A1A-80E7-A384ECEF829F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{F126220E-216D-4E34-B37F-ED0F04CFCAB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F126220E-216D-4E34-B37F-ED0F04CFCAB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F126220E-216D-4E34-B37F-ED0F04CFCAB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2D3C345-7007-4A1A-80E7-A384ECEF829F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2D3C345-7007-4A1A-80E7-A384ECEF829F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2D3C345-7007-4A1A-80E7-A384ECEF829F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2D3C345-7007-4A1A-80E7-A384ECEF829F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +72,7 @@ Global
 		{899852A3-D189-4DDD-9B19-D7BB3460B50E} = {1CD8BAAF-BACD-44C7-BD31-693BD7300916}
 		{7E99F04B-14B4-4AE7-8918-F5FAD678CEE2} = {1CD8BAAF-BACD-44C7-BD31-693BD7300916}
 		{F126220E-216D-4E34-B37F-ED0F04CFCAB7} = {AEB54CB1-7004-49B4-A0DC-5D1FD73616EF}
+		{D2D3C345-7007-4A1A-80E7-A384ECEF829F} = {06DCFBAF-7C65-4C2C-B3B9-0205FFAE06A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F354DA36-DD49-4249-877F-847C5944ED16}

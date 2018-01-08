@@ -1,0 +1,78 @@
+﻿@model DoctorMedicalSheetViewModel
+
+
+<div class="jumbotron">
+    <h1 class="display-3 text-center">Medical Sheet</h1>
+    <h4 class="display-3 text-center">Issue date: @DateTime.Now.ToShortDateString()</h4>
+
+
+    <div class="row">
+        <div class="col-lg-8">
+            <h2 class="display-3">Doctor:</h2>
+            <div class="card text-white bg-dark mb-4" style="max-width: 30rem;">
+                <p class="card-header">@Model.Doctor.Name</p>
+                <div class="card-body">
+
+                    <h4 class="card-text">Phone number: @Model.Doctor.PhoneNumber</h4>
+                    <h4 class="card-text">E-mail: @Model.Doctor.Email</h4>
+                    <h4 class="card-text">Birthdate: @Model.Doctor.Birthdate</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <h2 class="display-3">Patient:</h2>
+            <div class="card text-white bg-dark mb-4" style="max-width: 30rem;">
+                <p class="card-header">@Model.Patient.Name</p>
+                <div class="card-body">
+
+                    <h4 class="card-text">Phone number: @(Model.Patient.PhoneNumber == null ? "N/A" : Model.Patient.PhoneNumber )</h4>
+                    <h4 class="card-text">E-mail: @Model.Patient.Email</h4>
+                    <h4 class="card-text">Birthdate: @Model.Patient.Birthdate</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+
+            <hr class="my-4">
+
+            <form method="post">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group">
+                    <div class="input-group ">
+
+                        <input type="hidden" name="DoctorId" value="@Model.Doctor.Id" class="form-control bigger" />
+
+                    </div>
+                    <div class="input-group ">
+
+                        <input type="hidden" name="PatientId" value="@Model.Patient.Id" class="form-control bigger" />
+                    </div>
+                    <div class="input-group ">
+                        <div class="input-group-addon"><span class="glyphicon glyphicon-heart-empty"></span></div>
+                        <textarea required rows="10" placeholder="Write examination description" asp-for="ExaminationDescription" class="form-control bigger"></textarea>
+                        <span asp-validation-for="ExaminationDescription" class="text-danger"></span>
+
+                    </div>
+                </div>
+                <hr class="my-4">
+                <div class="form-group ">
+                    <button type="submit" class="btn btn-lg btn-block btn-success">Create</button>
+                </div>
+
+            </form>
+
+            <h5>
+                *Тhis is an official document, that can not be changed after its creation!
+            </h5>
+
+        </div>
+    </div>
+
+
+</div>

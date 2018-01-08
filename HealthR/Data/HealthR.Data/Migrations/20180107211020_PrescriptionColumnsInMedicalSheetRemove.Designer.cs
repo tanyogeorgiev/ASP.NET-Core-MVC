@@ -13,9 +13,10 @@ using System;
 namespace HealthR.Data.Migrations
 {
     [DbContext(typeof(HealthRDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180107211020_PrescriptionColumnsInMedicalSheetRemove")]
+    partial class PrescriptionColumnsInMedicalSheetRemove
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,8 +42,6 @@ namespace HealthR.Data.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("DoctorId");
-
-                    b.Property<DateTime>("ExaminationDateAndTime");
 
                     b.Property<string>("ExaminationDescription")
                         .IsRequired();

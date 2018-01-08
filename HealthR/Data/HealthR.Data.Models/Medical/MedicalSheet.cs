@@ -1,5 +1,6 @@
 ﻿namespace HealthR.Data.Models.Medical
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
 
     public class MedicalSheet
@@ -18,9 +19,6 @@
         [Required]
         public string ExaminationDescription { get; set; }
 
-        public int PrescriptionId { get; set; }
-
-        public Prescription Prescription { get; set; }
-
+        public DateTime ExaminationDateAndTime { get; set; } = DateTime.Now;
     }
 }

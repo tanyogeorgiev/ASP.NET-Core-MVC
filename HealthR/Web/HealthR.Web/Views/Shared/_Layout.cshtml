@@ -1,5 +1,9 @@
 ﻿@inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
+    @{ 
+        var userIsDoctor = User.IsInRole(WebConstants.DoctorRole);
+    }
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -30,26 +34,27 @@
                     <span class="icon-bar"></span>
                 </button>
                 @{var userName = UserManager.GetUserName(User); }
-        
+
                 <a asp-area="" asp-controller="Users" asp-action="Profile" asp-route-username="@userName" class="navbar-left"> <img height="45em" src="/images/HealthR_LogoR.svg" /> <div class="navbar-brand">User HUB</div></a>
-           </div>
+            </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li> <a asp-area="" asp-controller="Users" asp-action="Profile" asp-route-username="@userName"> DASHBOARD</a></li>
                     @if (User.IsInRole(WebConstants.AdministratorRole))
                     {
 
-                <li><a asp-area="Admin" asp-controller="Users" asp-action="Index">Manage Users</a></li>
+                        <li><a asp-area="Admin" asp-controller="Users" asp-action="Index">Manage Users</a></li>
 
 
                     }
-                    @if (User.IsInRole(WebConstants.DoctorRole))
+                    @if (userIsDoctor)
                     {
 
-                <li><a asp-area="Doctor" asp-controller="Patients" asp-action="Index">Manage Patients</a></li>
+                        <li><a asp-area="Doctor" asp-controller="Patients" asp-action="Index">Manage Patients</a></li>
 
 
                     }
+                    <li><a asp-area="@(userIsDoctor? "doctor" : string.Empty)" asp-controller="MedicalSheet" asp-action="All">Medical Sheets</a></li>
 
                     <li><a asp-area="" asp-controller="Schedule" asp-action="ByWeek">Schedule</a></li>
 
@@ -63,18 +68,18 @@
 
         @if (TempData.ContainsKey(WebConstants.TempDataSuccessMessageKey))
         {
-        <div class="alert alert-success flyover flyover-bottom ">
-            <h1> @TempData[WebConstants.TempDataSuccessMessageKey]</h1>
+            <div class="alert alert-success flyover flyover-bottom ">
+                <h1> @TempData[WebConstants.TempDataSuccessMessageKey]</h1>
 
-        </div>
+            </div>
         }
 
         @if (TempData.ContainsKey(WebConstants.TempDataErrorMessageKey))
         {
-        <div id="alertdanger" class="alert alert-danger flyover flyover-bottom ">
-            <h1> @TempData[WebConstants.TempDataErrorMessageKey]</h1>
+            <div id="alertdanger" class="alert alert-danger flyover flyover-bottom ">
+                <h1> @TempData[WebConstants.TempDataErrorMessageKey]</h1>
 
-        </div>
+            </div>
         }
 
         @RenderBody()

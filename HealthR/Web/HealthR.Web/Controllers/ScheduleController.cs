@@ -53,7 +53,7 @@ namespace HealthR.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> Today ()
+        public async Task<JsonResult> Today()
         {
             var userId = this.userManager.GetUserId(User);
 
@@ -66,12 +66,27 @@ namespace HealthR.Web.Controllers
 
             return Json(appointments);
         }
-       
+
+        [HttpGet]
+        public async Task<JsonResult> AppointmentRequests()
+        {
+            var userId = this.userManager.GetUserId(User);
+
+            var scheduleUser = await this.appointments.CheckUserForSchedule(userId);
+            if (!scheduleUser)
+            {
+                RedirectToAction(nameof(UsersController.CreateSchedule), "Users", new { area = string.Empty });
+            }
+
+            var requestedAppointments = await this.appointments.GetRequestedAppointments(userId);
+
+            return Json(requestedAppointments);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> NewAppointment(UserScheduleViewModel model)
         {
-
 
             if (String.IsNullOrEmpty(model.EditAppointment.Title)
                 || String.IsNullOrEmpty(model.EditAppointment.Description)
@@ -87,11 +102,9 @@ namespace HealthR.Web.Controllers
             string patientId = null;
             if (!String.IsNullOrEmpty(modelPatientId))
             {
-               var  patient = await this.userManager.FindByIdAsync(modelPatientId);
+                var patient = await this.userManager.FindByIdAsync(modelPatientId);
                 patientId = patient.Id;
             }
-           
-
 
             var userId = this.userManager.GetUserId(User);
 
@@ -129,15 +142,12 @@ namespace HealthR.Web.Controllers
                 string userId = this.userManager.GetUserId(User);
                 var validationChecks = await this.appointments.AlreadyScheduled(newDateTime, userId);
 
-         
-
-
-            if (validationChecks)
-            {
-                this.TempData.AddErrorMessage(WebConstants.AppointmentDateTimeReservedMessage);
+                if (validationChecks)
+                {
+                    this.TempData.AddErrorMessage(WebConstants.AppointmentDateTimeReservedMessage);
                     TempData["appointmentId"] = model.EditAppointment.Id;
-                return RedirectToAction(nameof(ByWeek));
-            }
+                    return RedirectToAction(nameof(ByWeek));
+                }
 
             }
             await this.appointments.Edit(
@@ -147,31 +157,26 @@ namespace HealthR.Web.Controllers
                 newDateTime,
                 model.EditAppointment.PatientId);
 
-            
-
-
-
             this.TempData.AddSuccessMessage(WebConstants.AppointmentEditSuccessMessage);
 
             var week = GetWeek(Convert.ToDateTime(model.EditAppointment.StartTime));
             var userSchedule = await PrepareResult(week);
-            return View(nameof(ByWeek),userSchedule);
-           
+            return View(nameof(ByWeek), userSchedule);
+
         }
 
-        public async Task<IActionResult> DeleteAppointment (string id,string week)
+        public async Task<IActionResult> DeleteAppointment(string id, string week)
         {
-           
-           
+
             if (String.IsNullOrEmpty(id)
-                || String.IsNullOrEmpty(week) )
+                || String.IsNullOrEmpty(week))
             {
                 this.TempData.AddErrorMessage(WebConstants.AppointmentNotDeletedMessage);
-               
+
             }
 
             var exist = await this.appointments.IsExistById(int.Parse(id));
-             if (!exist)
+            if (!exist)
             {
                 this.TempData.AddErrorMessage(WebConstants.AppointmentNotDeletedMessage);
 
@@ -179,7 +184,8 @@ namespace HealthR.Web.Controllers
 
             else
             {
-                await this.appointments.DeleteById(int.Parse(id));
+                var userId = this.userManager.GetUserId(User);
+                await this.appointments.DeleteById(int.Parse(id),userId);
             }
 
 
@@ -189,11 +195,21 @@ namespace HealthR.Web.Controllers
             return View(nameof(ByWeek), userSchedule);
         }
 
-       
 
-            //    HELPER METHODS BELOW
+        public async Task<JsonResult> AcceptAppointment(int appointmentId, int conflictedId)  
+        {
 
-            private DateTime GetDateByWeek(int week)
+            var userId = this.userManager.GetUserId(User);
+            var result = await this.appointments.AcceptAppointment(userId, appointmentId, conflictedId);
+
+
+            return  Json(result);
+
+        }
+
+        //    HELPER METHODS BELOW
+
+        private DateTime GetDateByWeek(int week)
         {
 
             int weekNumber = week;
@@ -227,7 +243,7 @@ namespace HealthR.Web.Controllers
         {
             var currentDate = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0);
             var culture = CultureInfo.CurrentCulture;
-            var firstdayofweek = DayOfWeek.Sunday;
+            var firstdayofweek = DayOfWeek.Monday;
             return culture.Calendar.GetWeekOfYear(
             date,
             culture.DateTimeFormat.CalendarWeekRule,

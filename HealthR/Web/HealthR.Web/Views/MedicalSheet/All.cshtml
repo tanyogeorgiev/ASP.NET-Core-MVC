@@ -1,0 +1,59 @@
+﻿@model IEnumerable<MedicalSheetServiceModel>
+@{
+    ViewData["Title"] = "Created Medical sheets";
+}
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<div class="well">
+    <h2 class="text-left text-primary">@ViewData["Title"]</h2>
+    <div data-toggle="modal" data-target="#modal" class="btn btn-primary"> Add new Medical Sheet </div>
+</div>
+
+@if (Model.Count() > 0)
+{
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+
+                <th class="text-center">
+                    Doctor name
+                </th>
+                <th class="text-center">
+                    Date and time
+                </th>
+                <th class="text-center">
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td class="text-center">
+                        @item.DoctorName
+                    </td>
+                    <td class="text-center">
+                        @(item.ExaminationDateAndTime)
+                    </td>
+                    <td class="text-center">
+
+                        <a class="btn btn-secondary" href="/Doctor/MedicalSheet/Details?id=@item.Id"> View  </a>
+
+                    </td>
+
+                </tr>
+            }
+
+
+        </tbody>
+    </table>
+}
+else
+{
+    <h3>No patients!</h3>
+}
+

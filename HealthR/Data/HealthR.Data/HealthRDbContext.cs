@@ -29,6 +29,7 @@ namespace HealthR.Data
         public DbSet<ScheduleAppointment> ScheduleAppointments { get; set; }
         public DbSet<Label> Labels { get; set; }
         public DbSet<RecurrenceAppointment> RecurrenceAppointments { get; set; }
+        public DbSet<ScheduleAppointmentRequest> RequestedAppointments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

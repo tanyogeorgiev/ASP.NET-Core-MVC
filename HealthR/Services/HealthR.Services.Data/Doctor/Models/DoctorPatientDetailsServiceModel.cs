@@ -4,8 +4,6 @@ namespace HealthR.Services.Data.Doctor.Models
     using AutoMapper;
     using HealthR.Common.Mapping;
     using HealthR.Data.Models;
-    using System;
-    using System.ComponentModel.DataAnnotations;
 
     public class DoctorPatientDetailsServiceModel : DoctorPatientServiceModel, IMapFrom<User>, IHaveCustomMapping
     {

@@ -134,15 +134,6 @@ namespace HealthR.Services.Data.Doctor
         }
 
 
-        public Task AddMedicalSheet()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task AddNewPrescription()
-        {
-            throw new System.NotImplementedException();
-        }
-
+         
     }
 }

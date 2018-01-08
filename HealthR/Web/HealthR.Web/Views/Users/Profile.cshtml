@@ -6,7 +6,7 @@
 
 <div class="well">
     <h2 class="text-left text-primary">@Model.Name's dashboard </h2>
-    
+
     @if (Model.UserName == User.Identity.Name)
     {
         <a asp-controller="Manage" asp-action="Index" class="btn btn-primary"> Edit Profile </a>
@@ -16,49 +16,7 @@
     }
 
 </div>
-<div class=" row">
-    <div class="col-md-6">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-
-                <h3 class="panel-title"><span class="glyphicon glyphicon-refresh" onclick="GetAppointments()" style="cursor:pointer;color:#ffffff;top:2px;float:right"></span> Appointments for today</h3>
-
-            </div>
-            <div id="todayappointments" class="panel-body">  </div>
-
-
-        </div>
-
-
-        <div class="panel panel-info">
-            <div class="panel-heading">
-
-                <h3 class="panel-title"><span class=" glyphicon glyphicon-info-sign" onclick="GetDoctorDetails('@Model.DoctorName')" style="cursor:pointer;color:#ffffff;top:2px;float:right"></span> Your personal GP</h3>
-
-            </div>
-            <div class="panel-body">
-
-                <div id="profileBox" class="hiddenDiv">
-                    <div class="thumbnail">
-                        <img id="patientProfileThumbnail" src="..." alt="">
-                        <div class="caption">
-                            <h3 id="doctorName">@(Model.DoctorName == null ? "Please contact your GP, to add you in the system!" : Model.DoctorName)</h3>
-                            <p id="doctorPhone">@(Model.DoctorPhone == null && Model.DoctorName != null ? "Phone: N/A" : Model.DoctorPhone)</p>
-                            <p id="doctorEmail">@Model.DoctorEmail</p>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-        </div>
-
-
-
-
-    </div>
-
+<div class="row">
     <div class="col-md-6">
         <div class="panel panel-info ">
             <div class="panel-heading">
@@ -87,17 +45,23 @@
                         {<div id="@schedule.Id" class=" col-md-2 schedules" style="color:red;">Inactive</div>
                             <div class="col-md-2 text-center" style=" cursor:pointer; color:#00e157" onclick="ChangeStatus('@schedule.Id')">
                                 <form asp-controller="Users" asp-action="ChangeSchedule" asp-area="" method="post" asp-route-id="@schedule.Id">
-                                   
-                                    <div class="text-center">
 
-                                        <button type="submit" value="change" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-ok"></span></button>
+                                    <div class="text-center">
+                                        <button type="submit" value="change" class="btn-link"><span class="glyphicon glyphicon-import"></span></button>
                                     </div>
                                 </form>
 
                             </div>
                         }
                         @if (schedule.IsActive)
-                        {<div id="@schedule.Id" class=" col-md-2 schedules" style="color:#00e157"> Active</div>}
+                        {<div id="@schedule.Id" class=" col-md-2 schedules" style="color:#00e157"> Active</div>
+
+                            <div class="col-md-2 text-center">
+                                <span class="glyphicon glyphicon-minus"></span>
+
+                            </div>
+                        }
+
 
 
                     </div>
@@ -107,47 +71,199 @@
         </div>
 
     </div>
+
+    <div class="col-md-3">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+
+                <h3 class="panel-title"><span class="glyphicon glyphicon-refresh" onclick="GetAppointments()" style="cursor:pointer;color:#ffffff;top:2px;float:right"></span> Appointments for today</h3>
+
+            </div>
+            <div id="todayappointments" class="panel-body">  </div>
+
+
+        </div>
+
+
+
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+
+                <h3 class="panel-title"><span class=" glyphicon glyphicon-info-sign" onclick="GetDoctorDetails('@Model.DoctorName')" style="cursor:pointer;color:#ffffff;top:2px;float:right"></span> Your personal GP</h3>
+
+            </div>
+            <div class="panel-body">
+
+                <div id="profileBox" class="hiddenDiv">
+                    <div class="thumbnail">
+                        <img id="patientProfileThumbnail" src="..." alt="">
+                        <div class="caption">
+                            <h3 id="doctorName">@(Model.DoctorName == null ? "Please contact your GP, to add you in the system!" : Model.DoctorName)</h3>
+                            <p id="doctorPhone">@(Model.DoctorPhone == null && Model.DoctorName != null ? "Phone: N/A" : Model.DoctorPhone)</p>
+                            <p id="doctorEmail">@Model.DoctorEmail</p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
 </div>
 
-<script>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
 
-    function GetAppointments() {
-        $.ajax({
-            url: "/schedule/today",
-            type: "GET",
-            success: function (data) {
-                var box = $("#todayappointments").empty();
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-tasks" onclick="GetRequestedAppointments()" style="cursor:pointer;color:#ffffff;top:2px;float:right"></span> Appointments requests</h3>
 
-
-
-                if (data.length === 0) {
-                    $("<h3>No scheduled appointmets for today!</h3>").appendTo(box);
+                </div>
+                <div id="appointmentrerequests" class="panel-body"> </div>
 
 
-                }
-                else {
-                    var li = $('<ol/>').appendTo(box)
-                    for (var el in data) {
-                        console.log(data[el].title)
-                        $("<li>" + data[el].title + " - <span style='float:right'>" + data[el].startTime.substring(10, 16) + "</span></li>").appendTo(li);
-                    };
-                }
+            </div>
+        </div>
+    </div>
 
-            },
-            error: function () {
-                $("#todayappointments").empty();
+    <script>
+        var visibleReq = false
+        function GetRequestedAppointments() {
+            console.log(visibleReq)
+            if (visibleReq) {
+                $("#appointmentrerequests").empty()
+                visibleReq = !visibleReq
             }
-        });
-    }
-    var visible = true;
+            else {
+                $.ajax({
+                    url: "/schedule/appointmentRequests",
+                    type: "GET",
+                    success: function (data) {
 
-    function GetDoctorDetails(dName) {
 
-        $("#profileBox").toggleClass('hiddenDiv', !visible)
 
-        visible = !visible
+                        console.log(data)
 
-    }
-</script>
+                        if (data.length === 0) {
+                            $("#appointmentrerequests").html("<h3>No Requested appointments!</h3>")
+
+                        }
+                        else {
+                            var div = $("<div id='reqResult'>")
+                            var table = $('<table id="requestsTable">').appendTo(div)
+                            table.addClass("table  table-condensed")
+                            var theader = $('<thead >')
+                            $('<th class="text-center">').html('From').appendTo(theader)
+                            $('<th class="text-center">').html('Title').appendTo(theader)
+                            $('<th class="text-center">').html('Description').appendTo(theader)
+                            $('<th class="text-center">').html('Date and Time').appendTo(theader)
+                            $('<th class="text-center">').html('Conflicted').appendTo(theader)
+                            $('<th class="text-center">').html('Accept').appendTo(theader)
+
+                            theader.appendTo(table)
+                            var tBody = $('<tbody >').appendTo(table)
+                            for (var el in data) {
+                                var thisRow = data[el].requestedAppointment
+
+                                var row = $('<tr class="text-center" id="' + thisRow.id + '">')
+                                var cFrom = $('<td>').html(thisRow.creatorName).appendTo(row)
+                                var cTitle = $('<td>').html(thisRow.title).appendTo(row)
+                                var cDescription = $('<td>').html(thisRow.description).appendTo(row)
+                                var cDateTime = $('<td>').html(thisRow.startTime.substring(0,19)).appendTo(row)
+                                var ca = data[el].conflictedAppointment
+                                var popoverButton;
+                                if (ca != null) {
+                                    popoverButton = $('<button  type="button" class="btn btn-link btn-sm " title="" data-container="body" data-toggle="popover" data-placement="left" data-content="' + ca.description + '" data-original-title="' + ca.title + ' - ' + ca.startTime.substring(0, 20) + '" ><span style="color:orange;" class="glyphicon glyphicon-comment"></span></button >')
+
+                                }
+                                else {
+                                    popoverButton = $('<span  style="color:gray;" class="glyphicon glyphicon-minus"></span>')
+                                }
+                                popoverButton.popover()
+                                var conflicted = $('<td id="accept">').html(popoverButton).appendTo(row)
+                                var conflictedAppointmentId = ca == null ? 0 : ca.id
+                                var acceptButton = $('<span  style="color:green; cursor:pointer" class="glyphicon glyphicon-transfer" onclick=(acceptAppointment(' + thisRow.id + ',' + conflictedAppointmentId + '))></span>')
+                                var cAccept = $('<td>').html(acceptButton).appendTo(row)
+                                row.appendTo(tBody)
+
+
+                            };
+
+                            var box = $("#appointmentrerequests")
+                            div.appendTo(box)
+                        }
+                        visibleReq = !visibleReq
+                    },
+                    error: function () {
+                        $("#appointmentrerequests").empty();
+                    }
+
+                });
+            }
+        }
+
+        function acceptAppointment(appointmentId, conflictedId) {
+
+
+            $.ajax({
+                url: "/schedule/acceptAppointment?appointmentId=" + appointmentId + '&conflictedId=' + conflictedId,
+                type: "post",
+                success: function () {
+                    var box = $("#appointmentrerequests")
+
+                    var table = box.find('table[id="requestsTable"]')
+                    var row = table.find('tr[id=' + appointmentId + ']').remove()
+
+                },
+                error: function () {
+                    var box = $("#appointmentrerequests")
+                    var table = box.find('table[id="requestsTable"]')
+                    var row = table.find('tr[id=' + appointmentId + ']')
+                    row.find("td[id=accept]").html('<span class="badge badge-danger" style="background-color:red!important">ERROR</span>')
+                }
+
+            })
+        }
+
+        function GetAppointments() {
+            $.ajax({
+                url: "/schedule/today",
+                type: "GET",
+                success: function (data) {
+                    var box = $("#todayappointments").empty();
+
+
+
+                    if (data.length === 0) {
+                        $("<h3>No scheduled appointmets for today!</h3>").appendTo(box);
+                    }
+                    else {
+                        var li = $('<ol/>').appendTo(box)
+                        for (var el in data) {
+                            console.log(data[el].title)
+                            $("<li>" + data[el].title + " - <span style='float:right'>" + data[el].startTime.substring(10, 16) + "</span></li>").appendTo(li);
+                        };
+                    }
+
+                },
+                error: function () {
+                    $("#todayappointments").empty();
+                }
+            });
+        }
+        var visible = true;
+
+        function GetDoctorDetails(dName) {
+
+            $("#profileBox").toggleClass('hiddenDiv', !visible)
+
+            visible = !visible
+
+        }
+    </script>
 
 

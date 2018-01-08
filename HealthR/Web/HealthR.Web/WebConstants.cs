@@ -34,6 +34,8 @@ namespace HealthR.Web
 
         public const string ScheduleCreateSucceess = "Your new schedule was created successfully!";
 
+        public const string MedicalSheetSuccessMessage = "Medical Sheet was created successfully!";
+
 
     }
 }

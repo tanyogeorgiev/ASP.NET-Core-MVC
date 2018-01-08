@@ -8,15 +8,9 @@ namespace HealthR.Services.Data.Doctor.Contracts
     {
         Task<bool> AddNewPatient(string doctorId, string patientId);
 
-        Task AddNewPrescription( );
-
-        Task AddMedicalSheet();
-
         Task<IEnumerable<DoctorPatientServiceModel>> GetAllPatients(string doctorId);
 
-        
         Task<IList<DoctorPatientAutocompleteServiceModel>> FindByPrefix(string prefix, string doctorId);
-
 
         Task<IList<DoctorPatientAutocompleteServiceModel>> FindByPrefixForSchedule(string prefix, string doctorId);
 
@@ -24,5 +18,6 @@ namespace HealthR.Services.Data.Doctor.Contracts
 
         Task<bool> DeletePatient(string doctorId,string patientId);
 
+       
     }
 }

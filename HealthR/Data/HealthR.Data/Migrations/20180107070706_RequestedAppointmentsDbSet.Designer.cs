@@ -13,9 +13,10 @@ using System;
 namespace HealthR.Data.Migrations
 {
     [DbContext(typeof(HealthRDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180107070706_RequestedAppointmentsDbSet")]
+    partial class RequestedAppointmentsDbSet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,19 +43,21 @@ namespace HealthR.Data.Migrations
 
                     b.Property<string>("DoctorId");
 
-                    b.Property<DateTime>("ExaminationDateAndTime");
-
                     b.Property<string>("ExaminationDescription")
                         .IsRequired();
 
                     b.Property<string>("PatientId")
                         .IsRequired();
 
+                    b.Property<int>("PrescriptionId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId");
+
+                    b.HasIndex("PrescriptionId");
 
                     b.ToTable("MedicalSheets");
                 });
@@ -441,6 +444,11 @@ namespace HealthR.Data.Migrations
                         .WithMany("MedicalSheets")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("HealthR.Data.Models.Medical.Prescription", "Prescription")
+                        .WithMany()
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("HealthR.Data.Models.Medical.Prescription", b =>
