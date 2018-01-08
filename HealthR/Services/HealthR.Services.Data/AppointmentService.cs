@@ -118,23 +118,7 @@ namespace HealthR.Services.Data
             return requestedAppointment;
         }
 
-        private Appointment GetConflictedAppointment(DateTime startTime, string userId)
-        {
-            int scheduleId = GetScheduleId(userId);
-
-            var conflictAppointment = AlreadyScheduled(startTime, userId);
-            conflictAppointment.Wait();
-            if (!conflictAppointment.Result)
-            {
-                return null;
-            }
-
-            var result = this.db.Schedules.Where(s => s.Id == scheduleId)
-                        .Select(a => a.Appointments.Where(ap => ap.Appointment.StartTime == startTime).Select(f => f.Appointment).FirstOrDefault()).FirstOrDefault();
-
-
-            return result;
-        }
+       
 
         public async Task<IEnumerable<AppointmentServiceModel>> GetTodayAppointment(string userId)
         {
@@ -233,7 +217,8 @@ namespace HealthR.Services.Data
 
                     this.db.Add(patientScheduleAppointment);
                 }
-            }
+            } 
+
             appointment.Title = title;
             appointment.Description = Description;
             appointment.StartTime = startTime;
@@ -296,11 +281,30 @@ namespace HealthR.Services.Data
         }
 
         public async Task<bool> IsExistById(int id)
-            => this.db.Appointments.Any(ap => ap.Id == id);
+            =>  this.db.Appointments.Any(ap => ap.Id == id);
+
+
 
         private int GetScheduleId(string userId)
             => (int)this.db.Users.Where(a => a.Id == userId).Select(u => u.ScheduleId).FirstOrDefault();
 
+        private Appointment GetConflictedAppointment(DateTime startTime, string userId)
+        {
+            int scheduleId = GetScheduleId(userId);
+
+            var conflictAppointment = AlreadyScheduled(startTime, userId);
+            conflictAppointment.Wait();
+            if (!conflictAppointment.Result)
+            {
+                return null;
+            }
+
+            var result = this.db.Schedules.Where(s => s.Id == scheduleId)
+                        .Select(a => a.Appointments.Where(ap => ap.Appointment.StartTime == startTime).Select(f => f.Appointment).FirstOrDefault()).FirstOrDefault();
+
+
+            return result;
+        }
 
     }
 }

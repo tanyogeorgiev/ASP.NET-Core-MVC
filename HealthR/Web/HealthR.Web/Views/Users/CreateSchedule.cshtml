@@ -1,7 +1,9 @@
 ﻿@model CreateUserScheduleViewModel
+@inject UserManager<User> UserManager
 
 @{
     ViewData["Title"] = "Create new Schedule";
+    var userName = UserManager.GetUserName(User);
 }
 
 
@@ -10,9 +12,9 @@
 </div>
 <div class="panel panel-danger">
     <div class="panel-heading">
-    <h3 class="panel-title">Important!</h3>
-        </div>
-    <div class="panel-body">Creating new schedule will remove all your existing appointments! </div> 
+        <h3 class="panel-title">Attention!</h3>
+    </div>
+    <div class="panel-body">Creating new schedule will change your active schedule with the new one. You can switch schedules from you  <a asp-area="" asp-controller="Users" asp-action="Profile" asp-route-username="@userName">DASHBOARD.</a> </div>
 </div>
 <div class="center">
     <section class="text-center">

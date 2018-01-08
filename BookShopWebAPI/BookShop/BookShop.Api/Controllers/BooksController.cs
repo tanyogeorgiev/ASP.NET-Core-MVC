@@ -32,7 +32,7 @@ namespace BookShop.Api.Controllers
         [ValidateModelState]
         public async Task<IActionResult> Post([FromBody] CreateBookRequestModel model)
         {
-            if (! await this.authors.Exists(model.AuthorId))
+            if (!await this.authors.Exists(model.AuthorId))
             {
                 return BadRequest("Author does not exist");
             }

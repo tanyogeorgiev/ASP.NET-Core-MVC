@@ -25,10 +25,10 @@ namespace BookShop.Api
             services.AddDbContext<BookShopDbContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDomainServices();
-
             services.AddAutoMapper();
 
+            services.AddDomainServices();
+                      
             services.AddRouting(routing => routing.LowercaseUrls = true);
 
             services.AddMvc();

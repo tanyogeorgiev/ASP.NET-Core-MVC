@@ -37,7 +37,7 @@ namespace HealthR.Web.Controllers
 
             if (!scheduleUser)
             {
-                RedirectToAction(nameof(UsersController.CreateSchedule), "Users", new { area = string.Empty });
+             return  RedirectToAction(nameof(UsersController.CreateSchedule), "Users", new { area = string.Empty });
             }
 
             var week = model.Week.WeekNumber;
@@ -108,10 +108,12 @@ namespace HealthR.Web.Controllers
 
             var userId = this.userManager.GetUserId(User);
 
+            var startTime = Convert.ToDateTime(model.EditAppointment.StartTime);
+            startTime = RoundTime(startTime);
             var result = await this.appointments.AddAppointment(
                 model.EditAppointment.Title,
                 model.EditAppointment.Description,
-                Convert.ToDateTime(model.EditAppointment.StartTime),
+                startTime,
                 userId,
                 patientId
                 );
@@ -134,6 +136,7 @@ namespace HealthR.Web.Controllers
                 model.EditAppointment.NewStartTime.Hour,
                 model.EditAppointment.NewStartTime.Minute,
                 0);
+             newDateTime = RoundTime(newDateTime);
 
             var currentStartDateTime = Convert.ToDateTime(model.EditAppointment.StartTime);
 
@@ -150,6 +153,7 @@ namespace HealthR.Web.Controllers
                 }
 
             }
+
             await this.appointments.Edit(
                 model.EditAppointment.Id,
                 model.EditAppointment.Title,
@@ -164,6 +168,8 @@ namespace HealthR.Web.Controllers
             return View(nameof(ByWeek), userSchedule);
 
         }
+
+       
 
         public async Task<IActionResult> DeleteAppointment(string id, string week)
         {
@@ -208,6 +214,7 @@ namespace HealthR.Web.Controllers
         }
 
         //    HELPER METHODS BELOW
+        
 
         private DateTime GetDateByWeek(int week)
         {
@@ -272,5 +279,33 @@ namespace HealthR.Web.Controllers
             return userSchedule;
         }
 
+        private DateTime RoundTime(DateTime newDateTime)
+        {
+            var minutes = newDateTime.Minute;
+
+            if (minutes <= 7)
+            {
+
+                newDateTime = newDateTime.AddMinutes(-minutes);
+            }
+            else if (minutes < 20)
+            {
+                newDateTime = newDateTime.AddMinutes(15 - minutes);
+            }
+            else if (minutes < 35)
+            {
+                newDateTime = newDateTime.AddMinutes(30 - minutes);
+            }
+            else if (minutes < 50)
+            {
+                newDateTime = newDateTime.AddMinutes(45 - minutes);
+            }
+            else if (minutes > 50)
+            {
+                newDateTime = newDateTime.AddMinutes(60 - minutes);
+            }
+
+            return newDateTime;
+        }
     }
 }
